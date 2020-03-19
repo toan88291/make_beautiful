@@ -1,6 +1,9 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_app_make_beautiful/resource/constant.dart';
 import 'home/home_page.dart';
+import 'news/news_page.dart';
+import 'storage/storage_page.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -11,12 +14,31 @@ class _MainPageState extends State<MainPage>{
 
   PageController _pageController;
 
-  int indexTab = 0;
+  int indexTab = 2;
+
+  int check = 2;
+
+  SharedAxisTransitionType _transitionType =
+      SharedAxisTransitionType.horizontal;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
+  }
+
+  Widget loadPage(int check) {
+    switch (check) {
+      case 0 :
+        return NewsPage();
+        break;
+      case 1 :
+        return StoragePage();
+        break;
+      default:
+        return HomePage();
+        break;
+    }
   }
 
   @override
@@ -28,7 +50,7 @@ class _MainPageState extends State<MainPage>{
         child: SafeArea(
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-            color: Color(0xffE81667),
+            color: Colors.white,
             child: Row(
               children: <Widget>[
                 Expanded(
@@ -36,38 +58,56 @@ class _MainPageState extends State<MainPage>{
                     child: Text(
                       'Beauty Care',
                       style: Theme.of(context).textTheme.title.copyWith(
-                          color: Colors.white
+                          color: PINK
                       ),
                     ),
                   ),
                 ),
-                Icon(Icons.search, color: Colors.white,),
+                Icon(Icons.search, color: PINK,),
               ],
             ),
           ),
         ),
-        preferredSize: Size.fromHeight(height + 48),
+        preferredSize: Size.fromHeight(height + 52),
       ),
-      body: Container(
-        child: PageView(
-          controller: _pageController,
-          physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[
-            HomePage(),
-            Container(color: Colors.red,),
-            Container(color: Colors.tealAccent,),
-          ],
-        ),
+      body: PageView(
+        controller: _pageController,
+        physics: NeverScrollableScrollPhysics(),
+        children: <Widget>[
+          Container(
+              child: PageTransitionSwitcher(
+                duration: const Duration(milliseconds: 1000),
+                reverse: true,
+                transitionBuilder: (
+                    Widget child,
+                    Animation<double> animation,
+                    Animation<double> secondaryAnimation,
+                    ) {
+                  return SharedAxisTransition(
+                    child: child,
+                    animation: animation,
+                    secondaryAnimation: secondaryAnimation,
+                    transitionType: _transitionType,
+                  );
+                },
+                child: loadPage(check),
+              )
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         clipBehavior: Clip.antiAlias,
         child: Icon(
           Icons.home,
-          color: Theme.of(context).colorScheme.onPrimary,
+          color: indexTab == 2 ? Color(0xff2EC492) : Color(0xff2EC492).withOpacity(0.7),
         ),
         onPressed: () {
           setState(() {
+            check = 2;
             _pageController.jumpToPage(0);
+            setState(() {
+              indexTab = 2;
+            });
             print('home ');
           });
         },
@@ -84,24 +124,27 @@ class _MainPageState extends State<MainPage>{
             child: ClipRRect(
               clipBehavior: Clip.hardEdge,
               borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-              child: BottomNavigationBar(
-                elevation: 0,
-                type: BottomNavigationBarType.shifting,
-                currentIndex: indexTab,
-
-                onTap: (index) {
-                  _pageController.jumpToPage(index + 1);
-                },
-                items: [
-                  BottomNavigationBarItem(
-                      icon: _getTabIcon(Icons.favorite, 1),
-                      title: _getTabTitle('Favorite',1)
-                  ),
-                  BottomNavigationBarItem(
-                      icon: _getTabIcon(Icons.notifications, 2),
-                      title: _getTabTitle('Notification',2)
-                  ),
-                ],
+              child: BottomAppBar(
+                child: BottomNavigationBar(
+                  onTap: (index) {
+                    _pageController.jumpToPage(index + 1);
+                    setState(() {
+                      check = index;
+                      indexTab = index;
+                      debugPrint('index: $index');
+                    });
+                  },
+                  items: [
+                    BottomNavigationBarItem(
+                        icon: _getTabIcon(Icons.update, 0),
+                        title: _getTabTitle('Mới nhất',0)
+                    ),
+                    BottomNavigationBarItem(
+                        icon: _getTabIcon(Icons.assignment, 1),
+                        title: _getTabTitle('Lưu trữ',1)
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -121,7 +164,7 @@ class _MainPageState extends State<MainPage>{
     return Text(
       title,
       style: TextStyle(
-      color: indexTab == index ? Color(0xffE81667) : Color(0xffE81667).withOpacity(0.5)
+      color: indexTab == index ? Color(0xffE81667) : Color(0xffE81667).withOpacity(0.5),
     ));
   }
 

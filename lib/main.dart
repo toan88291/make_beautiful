@@ -19,13 +19,13 @@ class MyApp extends StatelessWidget {
           primaryColor: Colors.white,
           colorScheme: ColorScheme.light().copyWith(
             onPrimary: Colors.black,
-            secondary: Colors.yellowAccent[400],
+            secondary: Colors.white,
             primary: Colors.grey,
           ),
 
           appBarTheme: AppBarTheme(
               textTheme: TextTheme(
-                  title: TextStyle(   
+                  title: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.bold

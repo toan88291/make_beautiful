@@ -19,7 +19,7 @@ class ItemGridWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Icon(Icons.account_circle),
+            Image.asset(data.icon, height: 48, width: 48,),
             Text(
               data.title,
               style: Theme.of(context).textTheme.subtitle.copyWith(
