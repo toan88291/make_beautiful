@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>313387706957-kaba4v81hcu2rs199qn0dueq5o4v2g2r.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.313387706957-kaba4v81hcu2rs199qn0dueq5o4v2g2r</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>313387706957-73kl8l8tam794l75uku79uc68284teps.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDs-4WKpjZUVtujVE2l1GAhp69FxeMdrU0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>313387706957</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>vn.agiletech.flutterAppMakeBeautiful</string>
+	<key>PROJECT_ID</key>
+	<string>beautiful-care</string>
+	<key>STORAGE_BUCKET</key>
+	<string>beautiful-care.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:313387706957:ios:b3699a1c30ba7ea0f44a04</string>
+	<key>DATABASE_URL</key>
+	<string>https://beautiful-care.firebaseio.com</string>
+</dict>
+</plist>

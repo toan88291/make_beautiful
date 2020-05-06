@@ -1,53 +1,45 @@
+import 'dart:io';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_app_make_beautiful/data/bloc/app_bloc.dart';
+import 'package:flutter_app_make_beautiful/data/repository/category_repository.dart';
+import 'package:flutter_app_make_beautiful/main_app.dart';
 import 'package:provider/provider.dart';
 
-import 'application.dart';
-import 'theme/custom_theme_data.dart';
-import 'theme/dynamic_theme_widget.dart';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final FirebaseApp app = await FirebaseApp.configure(
+    name: 'test',
+    options: FirebaseOptions(
+      googleAppID: (Platform.isIOS || Platform.isMacOS)
+          ? '1:313387706957:ios:b3699a1c30ba7ea0f44a04'
+          : '1:313387706957:android:9afd54b033955c13f44a04',
+      gcmSenderID: '313387706957',
+      apiKey: 'AIzaSyDTHZnk2Vc8Cwuv_3kA5iW8yaweDwYm4Y4',
+      projectID: 'beautiful-care',
+    ),
+  );
 
-void main() => runApp(MyApp());
+  FirebaseStorage(app: app, storageBucket: 'gs://beautiful-care.appspot.com');
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   final String TAG = 'MyApp';
 
   @override
   Widget build(BuildContext context) {
-    return DynamicThemeWidget(
-      customThemeData: CustomThemeData.light(),
-      initThemeData: ThemeData.light().copyWith(
-          primaryColor: Colors.white,
-          colorScheme: ColorScheme.light().copyWith(
-            onPrimary: Colors.black,
-            secondary: Colors.white,
-            primary: Colors.grey,
-          ),
-
-          appBarTheme: AppBarTheme(
-              textTheme: TextTheme(
-                  title: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold
-                  )
-              )
-          ),
-          tabBarTheme: TabBarTheme(
-            labelColor: Colors.black87,
-            labelStyle: GoogleFonts.quicksand().copyWith(
-                color: Colors.black87,
-                fontWeight: FontWeight.w800
-            ),
-            unselectedLabelColor: Colors.black54,
-            unselectedLabelStyle: GoogleFonts.quicksand().copyWith(
-                color: Colors.black54
-            ),
-          ),
-
-      ),
-      initLocale: Locale('vi','VI'),
-      child: Application(),
+    CategoryRepository categoryRepository = CategoryRepository();
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => AppBloc(categoryRepository: categoryRepository),
+        )
+      ],
+      child: MainApp(),
     );
   }
 }
-

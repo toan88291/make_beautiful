@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_make_beautiful/data/bloc/app_bloc.dart';
+import 'dart:developer' as developer;
 import 'package:flutter_app_make_beautiful/data/data_grid_menu.dart';
+import 'package:flutter_app_make_beautiful/data/model/response/category.dart';
 import 'package:flutter_app_make_beautiful/resource/constant.dart';
 import 'package:flutter_app_make_beautiful/widget/widgets.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -9,15 +13,39 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  static const String TAG = 'HomePage';
 
-  List<DataGridMenu> data = [
-    DataGridMenu('Da Đẹp','assets/ic_face.png',''),
-    DataGridMenu('Trang Điểm','assets/ic_makeup.jpg',''),
-    DataGridMenu('Tóc Đẹp','assets/ic_makeup.jpg',''),
-    DataGridMenu('Mặc Đẹp','assets/ic_makeup.jpg',''),
-    DataGridMenu('Tin Tức','assets/ic_makeup.jpg',''),
-    DataGridMenu('Thể Thao','assets/ic_makeup.jpg',''),
-  ];
+  AppBloc categoryBloc;
+
+  List<Category> categoryData;
+
+  VoidCallback onChange;
+
+  @override
+  void initState() {
+    super.initState();
+    onChange = () {
+      setState(() {
+
+      });
+    };
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (categoryBloc == null) {
+      categoryBloc = Provider.of(context);
+      categoryBloc.getCategory();
+      categoryBloc.addListener(onChange);
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    categoryBloc.removeListener(onChange);
+  }
 
   List<DataDressed> dataDressed =
   []..add(DataDressed('assets/image.jpg', 'Happy Hallowen 2019', 'Music show'))
@@ -27,21 +55,14 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
-    double width = MediaQuery.of(context).size.width;
-
-    double height = MediaQuery.of(context).size.height;
-
-    debugPrint('heght : ${(data.length~/3) * 60.0}');
-
     return Container(
-      padding: EdgeInsets.only(bottom: 60),
+      height: MediaQuery.of(context).size.height,
       child: CustomScrollView(
         shrinkWrap: false,
         slivers: <Widget>[
           SliverToBoxAdapter(
             child: Container(
-              height: (data.length~/3) * 140.0,
+              height: (6~/3) * 140.0,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
@@ -57,7 +78,7 @@ class _HomePageState extends State<HomePage> {
               ),
               padding: EdgeInsets.all(20),
               child: GridView.builder(
-                itemCount: data.length,
+                itemCount: categoryBloc.categoryData.asValue.value?.length ?? 0,
                 physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
@@ -67,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 padding: EdgeInsets.all(12),
                 itemBuilder: (context, index) {
-                  return ItemGridWidget(data[index]);
+                  return ItemGridWidget(categoryBloc.categoryData.asValue.value[index]);
                 },
               ),
             ),
@@ -91,6 +112,36 @@ class _HomePageState extends State<HomePage> {
                   ),),
                   Text('Xem Hết',style: Theme.of(context).textTheme.subtitle.copyWith(
                     color: PINK
+                  ),)
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              height: 200,
+              child: ListView.builder(
+                itemCount: dataDressed.length,
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return DressedBeautyWidget(dataDressed[index]);
+                },
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Text('Trang Điểm',style: Theme.of(context).textTheme.title.copyWith(
+                      fontWeight: FontWeight.bold
+                  ),),
+                  Text('Xem Hết',style: Theme.of(context).textTheme.subtitle.copyWith(
+                      color: PINK
                   ),)
                 ],
               ),
