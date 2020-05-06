@@ -5,9 +5,8 @@ import 'package:flutter_app_make_beautiful/data/model/request/sign_up_user.dart'
 import 'package:flutter_app_make_beautiful/data/model/response/category.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/post.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/sign_in_user.dart';
-import 'package:flutter_app_make_beautiful/data/model/response/user.dart';
 
-class CategoryRepository {
+class AppRepository {
   final Firestore _store = Firestore.instance;
 
   final String collectionPost = 'post';
@@ -102,5 +101,12 @@ class CategoryRepository {
     results = SignInUser.fromJson(map)..docId = documentSnapshot.documentID;
     return results;
   }
+
+  Future<bool> forgotPass(SignInUser user) async {
+    DocumentReference documentReference = _store
+        .collection(collectionUser).document(user.docId);
+    return documentReference.updateData(user.toJson()) != null;
+  }
+
 
 }

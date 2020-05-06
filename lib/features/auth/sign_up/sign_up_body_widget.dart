@@ -5,11 +5,13 @@ import 'package:flutter_app_make_beautiful/data/bloc/app_bloc.dart';
 import 'package:flutter_app_make_beautiful/data/model/request/sign_up_user.dart';
 import 'package:flutter_app_make_beautiful/features/auth/sign_in/sign_in_page.dart';
 import 'package:flutter_app_make_beautiful/resource/constant.dart';
+import 'package:flutter_app_make_beautiful/resource/icon.dart';
 import 'package:flutter_app_make_beautiful/utils.dart';
 import 'dart:developer' as developer;
-
-import 'package:flutter_app_make_beautiful/widget/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart' as Path;
+import 'package:flutter_app_make_beautiful/widget/widgets.dart';
 import 'package:provider/provider.dart';
 
 class SignUpBodyWidget extends StatefulWidget {
@@ -29,6 +31,8 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
   String fullname;
 
   String username;
+
+  String _uploadedURL;
 
   String password;
 
@@ -56,29 +60,48 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              _image != null
+                  ? Container(
+                      width: 64,
+                      height: 64,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: FileImage(
+                            _image,
+                          ))),
+                    )
+                  : Container(
+                      width: 64,
+                      height: 64,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: AssetImage(
+                            AppIcons.icAvatar,
+                          ))),
+                    ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 4),
+                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
                 child: InkWell(
                   onTap: () {
-                    getPicture();
+                    getImageGallery();
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Icon(
-                        Icons.camera_alt,
+                        Icons.image,
                         size: 40,
                         color: Colors.grey,
                       ),
                       SizedBox(width: 12),
                       Text(
                         'Add Profile Photo',
-                        style: Theme.of(context)
-                            .textTheme
-                            .subtitle2
-                            .copyWith(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.subtitle2.copyWith(
+                            color: Colors.grey, fontWeight: FontWeight.bold),
                       )
                     ],
                   ),
@@ -202,64 +225,58 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
   void _handleSignUpTap() {
     if (_keyForm.currentState.validate()) {
       _keyForm.currentState.save();
-      showDialogProgressLoading(
-          context,
-          _appBloc
-              .insertUser(SignUpUser(
-            IMAGE,
-            fullname,
-            password,
-            false,
-            [],
-            username,
-          ))
-      ).then((value) {
-        if (value) {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context){
-            return SignInPage();
-          }));
-        }
-      });
-    }
-  }
-
-  Future<void> getPicture() async {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            content: new Text("Pick image from"),
-            actions: <Widget>[
-              FlatButton(
-                child: new Text("GALLERY",style: TextStyle(color: Colors.grey),),
-                onPressed: () {
-                  getImageGallery();
-                },
-              ),
-              FlatButton(
-                child: new Text("CAMERA",style: TextStyle(color: Colors.grey),),
-                onPressed: () {
-                  getImageCamera();
-                },
-              ),
-            ],
-          );
+      if (_image == null) {
+        showDialogProgressLoading(
+            context,
+            _appBloc.insertUser(SignUpUser(
+              IMAGE,
+              fullname,
+              password,
+              false,
+              [],
+              username,
+            ))).then((value) {
+          if (value) {
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+              return SignInPage();
+            }));
+          }
         });
+      } else {
+        showDialogProgressLoading(context, uploadFile()).then((value) {
+            Navigator.of(context).pop();
+        });
+      }
+    }
   }
 
   Future getImageGallery() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image = image;
-      developer.log('getImageGallery $_image', name: TAG);
     });
   }
 
-  Future getImageCamera() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
-    setState(() {
-      _image = image;
+  Future uploadFile() async {
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('avatar/${Path.basename(_image.path)}');
+    StorageUploadTask uploadTask = storageReference.putFile(_image);
+    await uploadTask.onComplete;
+    developer.log('uploadFile', name: TAG);
+    storageReference.getDownloadURL().then((fileURL) {
+      setState(() {
+        _uploadedURL = fileURL;
+        developer.log('uploadFile url : $_uploadedURL', name: TAG);
+        _appBloc.insertUser(SignUpUser(
+          _uploadedURL,
+          fullname,
+          password,
+          false,
+          [],
+          username,
+        ));
+      });
     });
   }
-
 }

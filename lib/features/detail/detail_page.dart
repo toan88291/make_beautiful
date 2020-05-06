@@ -115,60 +115,146 @@ class _DetailPageState extends State<DetailPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-              bottom: TabBar(
-                controller: _tabController,
-                onTap: (index){
-                  _pageController.jumpToPage(index);
-                },
-                tabs: <Widget>[
-                  Tab(
-                    text: 'Nội Dung',
-                  ),
-                  Tab(
-                    text: 'Bình Luận',
-                  )
-                ],
-              ),
-              expandedHeight: 200.0,
-              floating: false,
-              pinned: true,
-              leading: BackButton(
-                color: PINK,
-              ),
-              flexibleSpace: FlexibleSpaceBar(
-                  centerTitle: true,
-                  title: Padding(
-                    padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
-                    child: Text(widget.data.title,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.0,
-                        )),
-                  ),
-                  background: Image.network(
-                    widget.data.thumb,
-                    fit: BoxFit.cover,
-                  ))),
-          SliverFillRemaining(
-            hasScrollBody: true,
-            child: PageView(
-              controller: _pageController,
+      body: NestedScrollView(
+        scrollDirection: Axis.vertical,
+        headerSliverBuilder: (context, bool) {
+          return <Widget>[
+            SliverAppBar(
+                expandedHeight: 200.0,
+                floating: false,
+                pinned: true,
+                leading: BackButton(
+                  color: PINK,
+                ),
+                flexibleSpace: FlexibleSpaceBar(
+                    centerTitle: true,
+                    title: Padding(
+                      padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
+                      child: Text(widget.data.title,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
+                          )),
+                    ),
+                    background: Image.network(
+                      widget.data.thumb,
+                      fit: BoxFit.cover,
+                    ))),
+          ];
+        },
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          padding: EdgeInsets.all(8),
+          child: SingleChildScrollView(
+            child: Column(
               children: <Widget>[
                 Container(
-                  child: Column(
+                  height: 48,
+                  width: double.infinity,
+                  child: TabBar(
+                    controller: _tabController,
+                    onTap: (index){
+                      _pageController.jumpToPage(index);
+                    },
+                    tabs: <Widget>[
+                      Tab(
+                        text: 'Nội Dung',
+                      ),
+                      Tab(
+                        text: 'Bình Luận',
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.height,
+                  child: PageView(
+                    allowImplicitScrolling: false,
                     children: <Widget>[
-                      Container(height: 500, color: Colors.red,),
+                      Padding(
+                        padding: EdgeInsets.only(top: 8.0),
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              padding: EdgeInsets.only(top: 12),
+                              child: Stack(
+                                overflow: Overflow.visible,
+                                children: <Widget>[
+                                  Positioned(
+                                    right: 0,
+                                    top: -12,
+                                    child: Container(
+                                      width: 48,
+                                      height: 48,
+                                      margin: EdgeInsets.only(right: 4),
+                                      alignment: Alignment.centerRight,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          shape: BoxShape.circle,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey,
+                                              offset: Offset(1.0, 1.0),
+                                              blurRadius: 1,
+                                              spreadRadius: 1,
+                                            )
+                                          ]),
+                                      child: IconButton(
+                                        onPressed: () {},
+                                        icon: Icon(
+                                          Icons.favorite,
+                                          color: isLiked() ? Colors.red : Colors.grey,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.only(right: 52.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 12),
+                                          child: Text(
+                                            widget.data.category,
+                                            style: Theme.of(context).textTheme.headline6,
+                                          ),
+                                        ),
+                                        Text(
+                                          '<',
+                                          style: Theme.of(context).textTheme.headline6,
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 12),
+                                          child: Text(
+                                            widget.data.sub_category,
+                                            style: Theme.of(context).textTheme.headline6,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 16),
+                              child: Column(
+                                children: _getContent(),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Container(),
                     ],
                   ),
                 )
               ],
             ),
           )
-        ],
+        ),
       ),
     );
   }

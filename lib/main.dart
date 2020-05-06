@@ -32,11 +32,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    CategoryRepository categoryRepository = CategoryRepository();
+    AppRepository appRepository = AppRepository();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => AppBloc(categoryRepository: categoryRepository),
+          create: (context) => AppBloc(appRepository: appRepository),
         )
       ],
       child: MainApp(),

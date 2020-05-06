@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppBloc extends ChangeNotifier {
   static const TAG = 'CategoryBloc';
 
-  CategoryRepository categoryRepository;
+  AppRepository appRepository;
 
   SignInUser currentUser;
 
@@ -22,16 +22,13 @@ class AppBloc extends ChangeNotifier {
 
   Result<List<Category>> categoryData = Result.value(null);
 
-  AppBloc({this.categoryRepository}) {
+  AppBloc({this.appRepository}) {
     getCategory();
     getIdUser();
-    categoryRepository.firebaseUser.addListener(() {
-
-    });
   }
 
   void getCategory() {
-    categoryRepository.getCategory().then((value) {
+    appRepository.getCategory().then((value) {
       categoryData = value;
       notifyListeners();
     });
@@ -48,28 +45,30 @@ class AppBloc extends ChangeNotifier {
   }
 
   Future<void> getCurrentUser(String id) async {
-    currentUser = await categoryRepository.getUser(id);
+    currentUser = await appRepository.getUser(id);
     await getStoragePost(currentUser);
     notifyListeners();
   }
 
   Future<void> setCurrentUser(SignInUser user) async {
     currentUser = user;
+    debugPrint('1');
     SharedPreferences.getInstance().then((value) {
       value.setString(TOKEN,currentUser.docId);
     });
+    debugPrint('2');
     await getStoragePost(user);
     notifyListeners();
   }
 
   Future<Result<List<Post>>> getNewPost() {
-    return categoryRepository.getNewPost();
+    return appRepository.getNewPost();
   }
 
   Future<void> getStoragePost(SignInUser user) async{
     user.save_post.forEach((element) {
       debugPrint('getStoragePost id : $element');
-      categoryRepository.getStoragePost(element).then((value) {
+      appRepository.getStoragePost(element).then((value) {
         dataStorage.add(value.asValue.value);
         notifyListeners();
       });
@@ -77,11 +76,11 @@ class AppBloc extends ChangeNotifier {
   }
 
   Future<bool> insertUser(SignUpUser data){
-    return categoryRepository.insertUser(data);
+    return appRepository.insertUser(data);
   }
 
   Future<bool> login(String user, String pass) async {
-    List<SignInUser> result = await categoryRepository.login(user, pass);
+    List<SignInUser> result = await appRepository.login(user, pass);
     if (result != null) {
       setCurrentUser(result[0]);
     }
@@ -89,8 +88,22 @@ class AppBloc extends ChangeNotifier {
   }
 
   Future<SignInUser> getUser(String id) async{
-    SignInUser signInUser = await categoryRepository.getUser(id);
+    SignInUser signInUser = await appRepository.getUser(id);
     return signInUser;
+  }
+
+  void logout() {
+    SharedPreferences.getInstance().then((value) {
+      value.clear();
+    });
+    dataStorage = [];
+    idUser = null;
+    currentUser = null;
+    notifyListeners();
+  }
+
+  Future<bool> forgotPass(SignInUser user) {
+    return appRepository.forgotPass(user);
   }
 
 }
