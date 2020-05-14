@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/category.dart';
+import 'package:flutter_app_make_beautiful/features/category/category_page.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ItemGridWidget extends StatelessWidget {
@@ -12,7 +13,9 @@ class ItemGridWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-
+        Navigator.of(context).push(MaterialPageRoute(builder: (context){
+          return CategoryPage(data);
+        }));
       },
       child: Card(
         color: Colors.white,

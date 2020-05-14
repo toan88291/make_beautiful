@@ -10,6 +10,7 @@ SubCategory _$SubCategoryFromJson(Map<String, dynamic> json) {
   return SubCategory(
     json['image'] as String,
     json['name'] as String,
+    json['title'] as String,
   );
 }
 
@@ -17,4 +18,5 @@ Map<String, dynamic> _$SubCategoryToJson(SubCategory instance) =>
     <String, dynamic>{
       'image': instance.image,
       'name': instance.name,
+      'title': instance.title,
     };

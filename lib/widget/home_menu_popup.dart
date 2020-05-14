@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_make_beautiful/data/bloc/app_bloc.dart';
+import 'package:flutter_app_make_beautiful/features/auth/change_info/change_info_page.dart';
 import 'package:flutter_app_make_beautiful/features/auth/forgot_pass/forgot_password_body.dart';
 import 'package:flutter_app_make_beautiful/features/auth/forgot_pass/forgot_password_page.dart';
 import 'package:flutter_app_make_beautiful/resource/constant.dart';
+import 'package:flutter_app_make_beautiful/resource/icon.dart';
 import 'dart:developer' as developer;
 
 import 'package:provider/provider.dart';
@@ -32,35 +34,45 @@ class _Header extends StatelessWidget {
       child: Row(
         children: <Widget>[
           ClipOval(
-            child: Image.network(
-              Provider.of<AppBloc>(context).currentUser.avatar,
-              width: 48,
-              height: 48,
-              fit: BoxFit.cover,
-              frameBuilder: (BuildContext context, Widget child, int frame,
-                  bool wasSynchronouslyLoaded) {
-                if (wasSynchronouslyLoaded) {
-                  return child;
-                }
-                return frame == null
-                    ? Shimmer.fromColors(
-                        baseColor: Colors.grey[300],
-                        highlightColor: Colors.grey[100],
-                        child: Container(
-                          height: 48,
-                          width: 48,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle, color: Colors.grey[100]),
-                        ),
-                      )
-                    : Image.network(
-                        Provider.of<AppBloc>(context).currentUser.avatar,
-                        width: 48,
-                        height: 48,
-                        fit: BoxFit.cover,
-                      );
-              },
-            ),
+            child: Provider.of<AppBloc>(context).currentUser?.avatar != null
+                ? Image.network(
+                    Provider.of<AppBloc>(context).currentUser?.avatar,
+                    width: 48,
+                    height: 48,
+                    fit: BoxFit.cover,
+                    frameBuilder: (BuildContext context, Widget child,
+                        int frame, bool wasSynchronouslyLoaded) {
+                      if (wasSynchronouslyLoaded) {
+                        return child;
+                      }
+                      return frame == null
+                          ? Shimmer.fromColors(
+                              baseColor: Colors.grey[300],
+                              highlightColor: Colors.grey[100],
+                              child: Container(
+                                height: 48,
+                                width: 48,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[100]),
+                              ),
+                            )
+                          : Image.network(
+                              Provider.of<AppBloc>(context).currentUser.avatar,
+                              width: 48,
+                              height: 48,
+                              fit: BoxFit.cover,
+                            );
+                    },
+                  )
+                : Container(
+                    width: 48,
+                    height: 48,
+                    child: CircleAvatar(
+                      backgroundImage: AssetImage(
+                        AppIcons.icAvatar,
+                      ),
+                    ),
+                  ),
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
@@ -68,13 +80,15 @@ class _Header extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  Provider.of<AppBloc>(context).currentUser.fullname,
+                  Provider.of<AppBloc>(context)?.currentUser?.fullname != null
+                      ? Provider.of<AppBloc>(context)?.currentUser?.fullname
+                      : '',
                   style: Theme.of(context).textTheme.subtitle1,
                 ),
                 Text(
-                  Provider.of<AppBloc>(context).currentUser.role
-                      ? 'Admin'
-                      : 'Member',
+                  Provider.of<AppBloc>(context)?.currentUser?.role != null
+                      ? 'Member'
+                      : 'Admin',
                   style: Theme.of(context).textTheme.caption,
                 )
               ],
@@ -111,6 +125,9 @@ class _Body extends StatelessWidget {
             ),
             onTap: () {
               Navigator.pop(context);
+              Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                return ChangeInfoPage(Provider.of<AppBloc>(context)?.currentUser);
+              }));
             },
           ),
           ListTile(

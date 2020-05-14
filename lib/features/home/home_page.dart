@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_make_beautiful/data/bloc/app_bloc.dart';
 import 'dart:developer' as developer;
-import 'package:flutter_app_make_beautiful/data/data_grid_menu.dart';
-import 'package:flutter_app_make_beautiful/data/model/response/category.dart';
+import 'package:flutter_app_make_beautiful/features/category/detail_category_widget.dart';
 import 'package:flutter_app_make_beautiful/resource/constant.dart';
 import 'package:flutter_app_make_beautiful/widget/widgets.dart';
 import 'package:provider/provider.dart';
@@ -15,9 +14,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   static const String TAG = 'HomePage';
 
-  AppBloc categoryBloc;
-
-  List<Category> categoryData;
+  AppBloc _appBloc;
 
   VoidCallback onChange;
 
@@ -34,24 +31,18 @@ class _HomePageState extends State<HomePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (categoryBloc == null) {
-      categoryBloc = Provider.of(context);
-      categoryBloc.getCategory();
-      categoryBloc.addListener(onChange);
+    if (_appBloc == null) {
+      _appBloc = Provider.of(context);
+      _appBloc.getCategory();
+      _appBloc.addListener(onChange);
     }
   }
 
   @override
   void dispose() {
     super.dispose();
-    categoryBloc.removeListener(onChange);
+    _appBloc.removeListener(onChange);
   }
-
-  List<DataDressed> dataDressed =
-  []..add(DataDressed('assets/image.jpg', 'Happy Hallowen 2019', 'Music show'))
-    ..add(DataDressed('assets/image.jpg', 'Music DJ King Monger Sert', 'Music show'))
-    ..add(DataDressed('assets/image.jpg', 'Summer Sounds Festival', 'Comedy show'))
-    ..add(DataDressed('assets/image.jpg', 'Happy New Year', 'Music show'));
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +69,7 @@ class _HomePageState extends State<HomePage> {
               ),
               padding: EdgeInsets.all(20),
               child: GridView.builder(
-                itemCount: categoryBloc.categoryData.asValue.value?.length ?? 0,
+                itemCount: _appBloc.categoryData.asValue.value?.length ?? 0,
                 physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
@@ -88,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 padding: EdgeInsets.all(12),
                 itemBuilder: (context, index) {
-                  return ItemGridWidget(categoryBloc.categoryData.asValue.value[index]);
+                  return ItemGridWidget(_appBloc.categoryData.asValue.value[index]);
                 },
               ),
             ),
@@ -107,25 +98,47 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Text('Mặc Đẹp',style: Theme.of(context).textTheme.title.copyWith(
-                    fontWeight: FontWeight.bold
-                  ),),
-                  Text('Xem Hết',style: Theme.of(context).textTheme.subtitle.copyWith(
-                    color: PINK
-                  ),)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12,vertical: 4),
+                    child: Text('Make Up',style: Theme.of(context).textTheme.subtitle2.copyWith(
+                        fontWeight: FontWeight.bold
+                    ),),
+                  ),
+                  InkWell(
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                        return DetailCategoryWidget(ID_HAIR_BEAUTY,'Tóc Đẹp');
+                      }));
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 4),
+                      child: Text('Xem Hết',style: Theme.of(context).textTheme.subtitle2.copyWith(
+                          color: PINK
+                      ),),
+                    ),
+                  )
                 ],
               ),
             ),
           ),
           SliverToBoxAdapter(
             child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12),
               height: 200,
-              child: ListView.builder(
-                itemCount: dataDressed.length,
+              child: ListView.separated(
+                itemCount: _appBloc.dataHairBeauty?.length ?? 0,
                 scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
                 itemBuilder: (context, index) {
-                  return DressedBeautyWidget(dataDressed[index]);
+                  if (index < 9) {
+                    return DressedBeautyWidget(_appBloc.dataHairBeauty[index]);
+                  }
+                  return null;
+                },
+                separatorBuilder: (context, index) {
+                  if (index < 9) {
+                    return SizedBox(width: 8,);
+                  }
+                  return null;
                 },
               ),
             ),
@@ -137,25 +150,47 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Text('Trang Điểm',style: Theme.of(context).textTheme.title.copyWith(
-                      fontWeight: FontWeight.bold
-                  ),),
-                  Text('Xem Hết',style: Theme.of(context).textTheme.subtitle.copyWith(
-                      color: PINK
-                  ),)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12,vertical: 4),
+                    child: Text('Mặc Đẹp',style: Theme.of(context).textTheme.subtitle2.copyWith(
+                        fontWeight: FontWeight.bold
+                    ),),
+                  ),
+                  InkWell(
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                        return DetailCategoryWidget(ID_HAIR_BEAUTY,'Tóc Đẹp');
+                      }));
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 4),
+                      child: Text('Xem Hết',style: Theme.of(context).textTheme.subtitle2.copyWith(
+                          color: PINK
+                      ),),
+                    ),
+                  )
                 ],
               ),
             ),
           ),
           SliverToBoxAdapter(
             child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12),
               height: 200,
-              child: ListView.builder(
-                itemCount: dataDressed.length,
+              child: ListView.separated(
+                itemCount: _appBloc.dataHairBeauty?.length ?? 0,
                 scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
                 itemBuilder: (context, index) {
-                  return DressedBeautyWidget(dataDressed[index]);
+                  if (index < 9) {
+                    return DressedBeautyWidget(_appBloc.dataHairBeauty[index]);
+                  }
+                  return null;
+                },
+                separatorBuilder: (context, index) {
+                  if (index < 9) {
+                    return SizedBox(width: 8,);
+                  }
+                  return null;
                 },
               ),
             ),
@@ -167,25 +202,47 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Text('Trang Điểm',style: Theme.of(context).textTheme.title.copyWith(
-                      fontWeight: FontWeight.bold
-                  ),),
-                  Text('Xem Hết',style: Theme.of(context).textTheme.subtitle.copyWith(
-                      color: PINK
-                  ),)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12,vertical: 4),
+                    child: Text('Thể Thao',style: Theme.of(context).textTheme.subtitle2.copyWith(
+                        fontWeight: FontWeight.bold
+                    ),),
+                  ),
+                  InkWell(
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                        return DetailCategoryWidget(ID_HAIR_BEAUTY,'Tóc Đẹp');
+                      }));
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 4),
+                      child: Text('Xem Hết',style: Theme.of(context).textTheme.subtitle2.copyWith(
+                          color: PINK
+                      ),),
+                    ),
+                  )
                 ],
               ),
             ),
           ),
           SliverToBoxAdapter(
             child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12),
               height: 200,
-              child: ListView.builder(
-                itemCount: dataDressed.length,
+              child: ListView.separated(
+                itemCount: _appBloc.dataHairBeauty?.length ?? 0,
                 scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
                 itemBuilder: (context, index) {
-                  return DressedBeautyWidget(dataDressed[index]);
+                  if (index < 9) {
+                    return DressedBeautyWidget(_appBloc.dataHairBeauty[index]);
+                  }
+                  return null;
+                },
+                separatorBuilder: (context, index) {
+                  if (index < 9) {
+                    return SizedBox(width: 8,);
+                  }
+                  return null;
                 },
               ),
             ),

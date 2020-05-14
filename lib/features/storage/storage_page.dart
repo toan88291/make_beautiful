@@ -26,32 +26,47 @@ class _StoragePageState extends State<StoragePage> {
   Widget build(BuildContext context) {
     double height =  MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return Container(
-        child: GridView.builder(
-          padding: EdgeInsets.all(12),
-          itemCount: _appBloc?.dataStorage?.length ?? 10,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            childAspectRatio: width/((height/2)),
+    if (_appBloc.dataStorage.isEmpty) {
+      return Container(
+        alignment: Alignment.center,
+        child: Text(
+          'Rỗng !!!',
+          style: Theme.of(context).textTheme.subtitle2.copyWith(
+              color: Colors.red
           ),
-          scrollDirection: Axis.vertical,
-          cacheExtent: 8,
-          itemBuilder: (context, index) {
-            if (_appBloc?.dataStorage == null) {
+        ),
+      );
+    } else if (_appBloc.dataStorage == null){
+      return Container(
+          child: GridView.builder(
+            padding: EdgeInsets.all(12),
+            itemCount: 10,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: width/((height/2)),
+            ),
+            scrollDirection: Axis.vertical,
+            cacheExtent: 8,
+            itemBuilder: (context, index) {
               return shimmerContainer(context);
-            } else if (_appBloc.dataStorage.isEmpty) {
-              return Container(
-                alignment: Alignment.center,
-                child: Text(
-                  'Rỗng !!!',
-                  style: Theme.of(context).textTheme.subtitle2.copyWith(
-                      color: Colors.red
-                  ),
-                ),
-              );
-            } else {
+            },
+          )
+      );
+    } else {
+      return Container(
+          child: GridView.builder(
+            padding: EdgeInsets.all(12),
+            itemCount: _appBloc?.dataStorage?.length ?? 10,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+            ),
+            scrollDirection: Axis.vertical,
+            cacheExtent: 8,
+            itemBuilder: (context, index) {
               return InkWell(
                 onTap: (){
                   Navigator.of(context).push(MaterialPageRoute(builder: (context){
@@ -59,41 +74,39 @@ class _StoragePageState extends State<StoragePage> {
                   }));
                 },
                 child: Container(
-                    child: Stack(
+                    child: Column(
                       children: <Widget>[
-                        Positioned.fill(
+                        Container(
+                          height: 120,
+                          width: 200,
                           child: ClipRRect(
                             borderRadius: BorderRadius.all(Radius.circular(8)),
                             child: Image.network(
                               _appBloc?.dataStorage[index].thumb,
-                              fit: BoxFit.fill,
-
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
-                        Positioned(
-                          left: 8,
-                          bottom: 8,
-                          child: Container(
-                            width: (width/2) - 40,
-                            color: Colors.transparent,
-                            child: Text(
-                              _appBloc?.dataStorage[index].title,
-                              style: Theme.of(context).textTheme.subtitle1.copyWith(
-                                  color: Colors.pink,
-                                  fontWeight: FontWeight.w700
-                              ),
+                        Container(
+                          height: 40,
+                          color: Colors.transparent,
+                          child: Text(
+                            _appBloc?.dataStorage[index].title,
+                            style: Theme.of(context).textTheme.subtitle2.copyWith(
+                                color: Colors.pink,
+                                fontWeight: FontWeight.w700
                             ),
                           ),
-                        )
+                        ),
                       ],
                     )
                 ),
               );
-            }
-          },
-        )
-    );
+            },
+          )
+      );
+    }
+
   }
 
   Widget shimmerContainer(context) {

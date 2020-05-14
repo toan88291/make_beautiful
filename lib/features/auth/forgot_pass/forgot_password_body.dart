@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_make_beautiful/data/bloc/app_bloc.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/sign_in_user.dart';
-import 'package:flutter_app_make_beautiful/utils.dart';
+import 'package:flutter_app_make_beautiful/utils/utils.dart';
 import 'package:flutter_app_make_beautiful/widget/widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -106,6 +106,7 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
 
               ButtonClickWidget(
                 'Đổi mật khẩu',
+                false,
                 onPressed: _handleSignUpTap,
               ),
               Visibility(

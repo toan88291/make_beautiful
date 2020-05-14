@@ -13,8 +13,10 @@ class SubCategory {
 
   String name;
 
+  String title;
 
-  SubCategory(this.image, this.name);
+
+  SubCategory(this.image, this.name, this.title);
 
   factory SubCategory.fromJson(Map<String, dynamic> json) => _$SubCategoryFromJson(json);
 

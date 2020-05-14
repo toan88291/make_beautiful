@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app_make_beautiful/data/bloc/app_bloc.dart';
@@ -6,7 +7,7 @@ import 'package:flutter_app_make_beautiful/data/model/request/sign_up_user.dart'
 import 'package:flutter_app_make_beautiful/features/auth/sign_in/sign_in_page.dart';
 import 'package:flutter_app_make_beautiful/resource/constant.dart';
 import 'package:flutter_app_make_beautiful/resource/icon.dart';
-import 'package:flutter_app_make_beautiful/utils.dart';
+import 'package:flutter_app_make_beautiful/utils/utils.dart';
 import 'dart:developer' as developer;
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -40,14 +41,23 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
 
   bool isShowEmail = false;
 
-  String errorText;
+  bool errorText = false;
 
   File _image;
+
+  bool isUpload = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _appBloc = Provider.of(context);
+  }
+
+  @override
+  void setState(fn) {
+    if(mounted){
+      super.setState(fn);
+    }
   }
 
   @override
@@ -68,6 +78,7 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
+                            fit: BoxFit.cover,
                               image: FileImage(
                             _image,
                           ))),
@@ -211,8 +222,21 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
                   },
                 ),
               ),
+              Visibility(
+                child: Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: Text(
+                    'Tên đăng nhập đã tồn tại',
+                    style: Theme.of(context).textTheme.subtitle2.copyWith(
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
+                visible: errorText,
+              ),
               ButtonClickWidget(
                 'Đăng kí',
+                isUpload,
                 onPressed: _handleSignUpTap,
               ),
             ],
@@ -225,28 +249,41 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
   void _handleSignUpTap() {
     if (_keyForm.currentState.validate()) {
       _keyForm.currentState.save();
-      if (_image == null) {
-        showDialogProgressLoading(
-            context,
-            _appBloc.insertUser(SignUpUser(
-              IMAGE,
-              fullname,
-              password,
-              false,
-              [],
-              username,
-            ))).then((value) {
-          if (value) {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-              return SignInPage();
-            }));
+      setState(() {
+        errorText = false;
+        isUpload = true;
+      });
+      _appBloc.isCheckUser(username)
+          .then((value) {
+        if (value) {
+          debugPrint('user da ton tai ');
+          setState(() {
+            errorText = true;
+            isUpload = false;
+          });
+        } else {
+          if (_image == null) {
+            showDialogProgressLoading(
+                context,
+                _appBloc.insertUser(SignUpUser(
+                  IMAGE,
+                  fullname,
+                  password,
+                  false,
+                  [],
+                  username,
+                ))).then((value) {
+              if (value) {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                  return SignInPage();
+                }));
+              }
+            });
+          } else {
+            uploadFile();
           }
-        });
-      } else {
-        showDialogProgressLoading(context, uploadFile()).then((value) {
-            Navigator.of(context).pop();
-        });
-      }
+        }
+      });
     }
   }
 
@@ -257,26 +294,37 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
     });
   }
 
-  Future uploadFile() async {
+  void uploadFile() {
+    Random random = new Random();
+    int randomNumber = random.nextInt(100000000) +10 ;
     StorageReference storageReference = FirebaseStorage.instance
         .ref()
-        .child('avatar/${Path.basename(_image.path)}');
+        .child('avatar/${Path.basename(randomNumber.toString()+'.png')}');
     StorageUploadTask uploadTask = storageReference.putFile(_image);
-    await uploadTask.onComplete;
-    developer.log('uploadFile', name: TAG);
-    storageReference.getDownloadURL().then((fileURL) {
-      setState(() {
-        _uploadedURL = fileURL;
-        developer.log('uploadFile url : $_uploadedURL', name: TAG);
-        _appBloc.insertUser(SignUpUser(
-          _uploadedURL,
-          fullname,
-          password,
-          false,
-          [],
-          username,
-        ));
+    uploadTask.onComplete.whenComplete((){
+      developer.log('uploadFile', name: TAG);
+      storageReference.getDownloadURL().then((fileURL) {
+        setState(() {
+          _uploadedURL = fileURL;
+          developer.log('uploadFile url : $_uploadedURL', name: TAG);
+          _appBloc.insertUser(SignUpUser(
+            _uploadedURL,
+            fullname,
+            password,
+            false,
+            [],
+            username,
+          )).then((value) {
+            isUpload = false;
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+              return SignInPage();
+            }));
+          });
+        });
+      }).catchError((err){
+        developer.log('uploadFile error $err', name: TAG);
       });
     });
+
   }
 }

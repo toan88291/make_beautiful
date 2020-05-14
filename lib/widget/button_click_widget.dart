@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ButtonClickWidget extends StatelessWidget {
@@ -5,7 +6,9 @@ class ButtonClickWidget extends StatelessWidget {
 
   final String title;
 
-  ButtonClickWidget(this.title, {this.onPressed});
+  final bool isUpload;
+
+  ButtonClickWidget(this.title, this.isUpload, {this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -17,13 +20,15 @@ class ButtonClickWidget extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Text(
-            title,
-            style: Theme.of(context).textTheme.headline6.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.white
-            ),
-        ),
+        child: isUpload
+            ? CupertinoActivityIndicator()
+            : Text(
+                title,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    .copyWith(fontWeight: FontWeight.bold, color: Colors.white),
+              ),
       ),
     );
   }

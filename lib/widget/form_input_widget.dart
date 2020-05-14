@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class FormInputWidget extends StatelessWidget {
   final String hintText;
 
+  final String initialValue;
+
   final FormFieldValidator<String> validator;
 
   final FormFieldSetter<String> onSaved;
@@ -21,6 +23,7 @@ class FormInputWidget extends StatelessWidget {
 
   FormInputWidget(this.hintText,
       {this.validator,
+      this.initialValue,
       this.onSaved,
       this.obscureText,
       this.onChanged,
@@ -34,6 +37,7 @@ class FormInputWidget extends StatelessWidget {
     return Container(
       alignment: Alignment.centerLeft,
       child: TextFormField(
+        initialValue: initialValue,
         decoration: InputDecoration(
           prefixIconConstraints: BoxConstraints(
             minWidth: 48,

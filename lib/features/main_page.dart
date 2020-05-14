@@ -8,6 +8,7 @@ import 'package:flutter_app_make_beautiful/resource/constant.dart';
 import 'package:flutter_app_make_beautiful/resource/icon.dart';
 import 'package:flutter_app_make_beautiful/widget/home_menu_popup.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'auth/sign_up/sign_up_page.dart';
 import 'home/home_page.dart';
 import 'news/news_page.dart';
@@ -73,6 +74,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).padding.top;
+
     return Scaffold(
         appBar: PreferredSize(
           child: SafeArea(
@@ -83,8 +85,6 @@ class _MainPageState extends State<MainPage> {
                 children: <Widget>[
                   _appBloc.currentUser == null
                       ? Container(
-                          width: 48,
-                          height: 48,
                           child: InkWell(
                               onTap: () {
                                 Navigator.of(context)
@@ -107,10 +107,38 @@ class _MainPageState extends State<MainPage> {
                                     context: context, child: HomeMenuPopup());
                               },
                               child: _appBloc.currentUser != null
-                                  ? CircleAvatar(
-                                      backgroundImage:
-                                          NetworkImage(_appBloc.currentUser.avatar),
+                                  ? ClipOval(
+                                child: Image.network(
+                                  Provider.of<AppBloc>(context).currentUser?.avatar,
+                                  width: 48,
+                                  height: 48,
+                                  fit: BoxFit.cover,
+                                  frameBuilder: (BuildContext context, Widget child,
+                                      int frame, bool wasSynchronouslyLoaded) {
+                                    if (wasSynchronouslyLoaded) {
+                                      return child;
+                                    }
+                                    return frame == null
+                                        ? Shimmer.fromColors(
+                                      baseColor: Colors.grey[300],
+                                      highlightColor: Colors.grey[100],
+                                      child: Container(
+                                        height: 48,
+                                        width: 48,
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.grey[100]),
+                                      ),
                                     )
+                                        : Image.network(
+                                      Provider.of<AppBloc>(context).currentUser.avatar,
+                                      width: 48,
+                                      height: 48,
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                ),
+                              )
                                   : CircleAvatar(
                                       backgroundImage: AssetImage(
                                         AppIcons.icAvatar,
@@ -149,21 +177,21 @@ class _MainPageState extends State<MainPage> {
           children: <Widget>[
             Container(
                 child: PageTransitionSwitcher(
-              duration: const Duration(milliseconds: 1000),
-              reverse: true,
-              transitionBuilder: (
-                Widget child,
-                Animation<double> animation,
-                Animation<double> secondaryAnimation,
-              ) {
-                return SharedAxisTransition(
-                  child: child,
-                  animation: animation,
-                  secondaryAnimation: secondaryAnimation,
-                  transitionType: _transitionType,
-                );
-              },
-              child: loadPage(check),
+                  duration: const Duration(milliseconds: 1000),
+                  reverse: true,
+                  transitionBuilder: (
+                    Widget child,
+                    Animation<double> animation,
+                    Animation<double> secondaryAnimation,
+                  ) {
+                    return SharedAxisTransition(
+                      child: child,
+                      animation: animation,
+                      secondaryAnimation: secondaryAnimation,
+                      transitionType: _transitionType,
+                    );
+                  },
+                  child: loadPage(check),
             )),
           ],
         ),

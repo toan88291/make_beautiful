@@ -39,8 +39,6 @@ class _NewsPageState extends State<NewsPage> {
 
   @override
   Widget build(BuildContext context) {
-    double height =  MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
     return Container(
       child: GridView.builder(
         padding: EdgeInsets.all(12),
@@ -49,7 +47,6 @@ class _NewsPageState extends State<NewsPage> {
           crossAxisCount: 2,
           mainAxisSpacing: 16,
           crossAxisSpacing: 16,
-          childAspectRatio: width/((height/2)),
         ),
         scrollDirection: Axis.vertical,
         cacheExtent: 8,
@@ -60,7 +57,7 @@ class _NewsPageState extends State<NewsPage> {
             return Container(
               alignment: Alignment.center,
               child: Text(
-                'Rỗng !!!',
+                'Danh sách trống !!!',
                 style: Theme.of(context).textTheme.subtitle2.copyWith(
                   color: Colors.red
                 ),
@@ -74,32 +71,30 @@ class _NewsPageState extends State<NewsPage> {
                 }));
               },
               child: Container(
-                  child: Stack(
+                  child: Column(
                     children: <Widget>[
-                      Positioned.fill(
+                      Container(
+                        height: 120,
+                        width: 200,
                         child: ClipRRect(
                           borderRadius: BorderRadius.all(Radius.circular(8)),
                           child: Image.network(
                             dataPost[index].thumb,
-                            fit: BoxFit.fill,
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
-                      Positioned(
-                        left: 8,
-                        bottom: 8,
-                        child: Container(
-                          width: (width/2) - 40,
-                          color: Colors.transparent,
-                          child: Text(
-                            dataPost[index].title,
-                            style: Theme.of(context).textTheme.subtitle1.copyWith(
-                                color: Colors.pink,
-                                fontWeight: FontWeight.w700
-                            ),
+                      Container(
+                        height: 40,
+                        color: Colors.transparent,
+                        child: Text(
+                          dataPost[index].title,
+                          style: Theme.of(context).textTheme.subtitle2.copyWith(
+                              color: Colors.pink,
+                              fontWeight: FontWeight.w700
                           ),
                         ),
-                      )
+                      ),
                     ],
                   )
               ),

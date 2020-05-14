@@ -27,7 +27,7 @@ class _SignInBodyWidgetState extends State<SignInBodyWidget> {
 
   bool isShowEmail = false;
 
-  String errorText;
+  bool errorText = false;
 
   @override
   void didChangeDependencies() {
@@ -125,8 +125,22 @@ class _SignInBodyWidgetState extends State<SignInBodyWidget> {
                   },
                 ),
               ),
+              Visibility(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Text(
+                    'Đăng nhập thất bại! \n Sai tên đăng nhập hoặc nhật khẩu',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.subtitle2.copyWith(
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
+                visible: errorText,
+              ),
               ButtonClickWidget(
                 'Đăng nhập',
+                false,
                 onPressed: _handleSignInTap,
               ),
               InkWell(
@@ -162,12 +176,19 @@ class _SignInBodyWidgetState extends State<SignInBodyWidget> {
   void _handleSignInTap() {
     if (_keyForm.currentState.validate()) {
       _keyForm.currentState.save();
+      setState(() {
+        errorText = false;
+      });
       showDialogProgressLoading(context, _appBloc.login(username, password))
           .then((value) {
             if (value) {
               Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context){
                 return MainPage();
               }));
+            } else {
+              setState(() {
+                errorText = true;
+              });
             }
       });
     }
