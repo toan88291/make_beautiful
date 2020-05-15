@@ -124,7 +124,7 @@ class _HomePageState extends State<HomePage> {
           SliverToBoxAdapter(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12),
-              height: 200,
+              height: 220,
               child: ListView.separated(
                 itemCount: _appBloc.dataHairBeauty?.length ?? 0,
                 scrollDirection: Axis.horizontal,
@@ -176,7 +176,7 @@ class _HomePageState extends State<HomePage> {
           SliverToBoxAdapter(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12),
-              height: 200,
+              height: 220,
               child: ListView.separated(
                 itemCount: _appBloc.dataHairBeauty?.length ?? 0,
                 scrollDirection: Axis.horizontal,
@@ -228,7 +228,7 @@ class _HomePageState extends State<HomePage> {
           SliverToBoxAdapter(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12),
-              height: 200,
+              height: 220,
               child: ListView.separated(
                 itemCount: _appBloc.dataHairBeauty?.length ?? 0,
                 scrollDirection: Axis.horizontal,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_make_beautiful/data/bloc/app_bloc.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/comment.dart';
+import 'package:flutter_app_make_beautiful/data/model/response/reply_comment.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/sign_in_user.dart';
 import 'package:flutter_app_make_beautiful/resource/constant.dart';
 import 'package:flutter_app_make_beautiful/widget/show_dialog_loading.dart';
@@ -8,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'dart:developer' as developer;
 
 import 'package:shimmer/shimmer.dart';
+import 'package:tuple/tuple.dart';
 
 import 'reply_comment_widget.dart';
 
@@ -20,8 +22,10 @@ class CommentWidget extends StatefulWidget {
 
   final VoidCallback onLoadComment;
 
-  CommentWidget(
-      this.id, this.dataComment, this.currentUser, this.onLoadComment);
+  final ValueChanged<Tuple3<bool, String, List<ReplyComment>>> onReplyComment;
+
+  CommentWidget(this.id, this.dataComment, this.currentUser, this.onLoadComment,
+      this.onReplyComment);
 
   @override
   _CommentWidgetState createState() => _CommentWidgetState();
@@ -61,14 +65,14 @@ class _CommentWidgetState extends State<CommentWidget> {
                           children: <Widget>[
                             Container(
                               decoration: BoxDecoration(
-                                  color: isReply
-                                      ? Colors.pink[50]
-                                      : Colors.grey[100],
-                                  border: Border(
-                                      bottom: BorderSide(
-                                    width: 0.5,
-                                    color: Colors.grey,
-                                  )),
+                                color: widget.dataComment[index].isReply
+                                    ? Colors.pink[50]
+                                    : Colors.grey[100],
+                                border: Border(
+                                    bottom: BorderSide(
+                                  width: 0.5,
+                                  color: Colors.grey,
+                                )),
                               ),
                               padding: EdgeInsets.symmetric(
                                 vertical: 4,
@@ -112,12 +116,11 @@ class _CommentWidgetState extends State<CommentWidget> {
                                                 ),
                                               )
                                             : CircleAvatar(
-                                          radius: 24,
-                                          backgroundImage: NetworkImage(
-                                              widget.dataComment[index]
-                                                  .user_comment.avatar
-                                          ),
-                                        );
+                                                radius: 24,
+                                                backgroundImage: NetworkImage(
+                                                    widget.dataComment[index]
+                                                        .user_comment.avatar),
+                                              );
                                       },
                                     ),
                                   ),
@@ -188,8 +191,18 @@ class _CommentWidgetState extends State<CommentWidget> {
                                             InkWell(
                                               onTap: () {
                                                 setState(() {
-                                                  isReply = !isReply;
+                                                  widget.dataComment[index]
+                                                          .isReply =
+                                                      !widget.dataComment[index]
+                                                          .isReply;
                                                 });
+                                                widget.onReplyComment(Tuple3(
+                                                    widget.dataComment[index]
+                                                        .isReply,
+                                                    widget.dataComment[index]
+                                                        .docId,
+                                                    widget.dataComment[index]
+                                                        .reply_comment));
                                               },
                                               child: Padding(
                                                 padding: EdgeInsets.symmetric(
@@ -200,10 +213,16 @@ class _CommentWidgetState extends State<CommentWidget> {
                                                       .textTheme
                                                       .subtitle1
                                                       .copyWith(
-                                                        color: isReply
+                                                        color: widget
+                                                                .dataComment[
+                                                                    index]
+                                                                .isReply
                                                             ? PINK
                                                             : Colors.black,
-                                                        fontWeight: isReply
+                                                        fontWeight: widget
+                                                                .dataComment[
+                                                                    index]
+                                                                .isReply
                                                             ? FontWeight.bold
                                                             : FontWeight.normal,
                                                       ),
@@ -235,10 +254,12 @@ class _CommentWidgetState extends State<CommentWidget> {
                                                   ),
                                                 ),
                                                 visible: widget
-                                                        .dataComment[index]
-                                                        .user_comment
-                                                        .id ==
-                                                    widget.currentUser.docId,
+                                                            .dataComment[index]
+                                                            .user_comment
+                                                            .id ==
+                                                        widget.currentUser
+                                                            .docId ||
+                                                    widget.currentUser.role,
                                               ),
                                             ),
                                           ],
@@ -256,10 +277,9 @@ class _CommentWidgetState extends State<CommentWidget> {
                                   children: showCommentReply(index),
                                 ),
                               ),
-                              visible: widget.dataComment[index].isReply ||
-                                  widget.dataComment[index].reply_comment
-                                          .length >
-                                      0,
+                              visible: widget
+                                      .dataComment[index].reply_comment.length >
+                                  0,
                             )
                           ],
                         );
@@ -288,7 +308,14 @@ class _CommentWidgetState extends State<CommentWidget> {
   List<Widget> showCommentReply(int index) {
     List<Widget> datas = [];
     widget.dataComment[index].reply_comment.forEach((element) {
-      datas.add(ReplyCommentWidget(element, widget.currentUser.docId));
+      datas.add(ReplyCommentWidget(
+          element,
+          widget.currentUser.docId,
+          widget.dataComment[index].reply_comment,
+          widget.currentUser,
+          widget.onLoadComment,
+          Tuple2<String,String>(widget.id,widget.dataComment[index].docId),
+      ));
     });
     return datas;
   }

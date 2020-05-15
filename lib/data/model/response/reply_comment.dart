@@ -20,7 +20,6 @@ class ReplyComment {
 
   UserComment user_reply;
 
-
   ReplyComment(this.content, this.date_time, this.user_reply);
 
   factory ReplyComment.fromJson(Map<String, dynamic> json) => _$ReplyCommentFromJson(json);
@@ -31,6 +30,6 @@ class ReplyComment {
       <String, dynamic>{
         'content': instance.content,
         'date_time': const TimestampConvertDatetime().toJson(instance.date_time),
-        'user_id_reply': instance.user_reply.toJson(),
+        'user_reply': instance.user_reply.toJson(),
       };
  }

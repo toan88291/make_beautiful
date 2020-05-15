@@ -13,7 +13,10 @@ class Comment {
   )
   String docId;
 
-  bool isReply = false;
+  @JsonKey(
+      ignore: true
+  )
+  bool isReply;
 
   String content;
 

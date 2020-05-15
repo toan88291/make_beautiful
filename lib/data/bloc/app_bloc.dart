@@ -5,6 +5,7 @@ import 'package:flutter_app_make_beautiful/data/model/request/sign_up_user.dart'
 import 'package:flutter_app_make_beautiful/data/model/response/category.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/comment.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/post.dart';
+import 'package:flutter_app_make_beautiful/data/model/response/reply_comment.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/sign_in_user.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/sub_category.dart';
 import 'package:flutter_app_make_beautiful/data/repository/app_repository.dart';
@@ -148,6 +149,10 @@ class AppBloc extends ChangeNotifier {
 
   Future<bool> insertComment(String id, Comment data) async {
     return appRepository.insertComment(id, data);
+  }
+
+  Future<bool> insertCommentReply(String id,String idReply, List<Map<String, dynamic>> data) async {
+    return appRepository.insertCommentReply(id,idReply,data);
   }
 
   Future<bool> deleteComment(String id, String idComment) async {

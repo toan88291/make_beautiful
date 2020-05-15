@@ -1,14 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_make_beautiful/data/bloc/app_bloc.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/reply_comment.dart';
+import 'package:flutter_app_make_beautiful/data/model/response/sign_in_user.dart';
 import 'package:flutter_app_make_beautiful/widget/show_dialog_loading.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:tuple/tuple.dart';
 
 class ReplyCommentWidget extends StatelessWidget {
   final ReplyComment data;
 
   final String docId;
 
-  ReplyCommentWidget(this.data, this.docId);
+  final List<ReplyComment> dataComment;
+
+  final SignInUser currentUser;
+
+  final VoidCallback onLoadComment;
+
+  final Tuple2<String,String> idDelete;
+
+  List<Map<String,dynamic>> dataCommentMap = [];
+
+  ReplyCommentWidget(this.data, this.docId, this.dataComment, this.currentUser,this.onLoadComment,this.idDelete);
 
   @override
   Widget build(BuildContext context) {
@@ -121,13 +135,17 @@ class ReplyCommentWidget extends StatelessWidget {
                       alignment: Alignment.centerRight,
                       child: InkWell(
                         onTap: () {
-//                      showDialogProgressLoading(
-//                          context,
-//                          _appBloc.deleteComment(widget.id,
-//                              widget.dataComment[index].docId))
-//                          .then((value) {
-//                        widget.onLoadComment();
-//                      });
+                          debugPrint('data : ${dataComment.length}');
+                          dataComment.remove(data);
+                          debugPrint('data 2: ${dataComment.length}');
+                          debugPrint('id post: ${idDelete.item1}');
+                          debugPrint('id comment: ${idDelete.item2}');
+                          loadMapComment();
+                          showDialogProgressLoading<bool>(
+                              context, Provider.of<AppBloc>(context,listen: false).insertCommentReply(idDelete.item1, idDelete.item2,
+                              dataCommentMap)).then((value) {
+                            onLoadComment();
+                          });
                         },
                         child: Visibility(
                           child: Padding(
@@ -138,7 +156,7 @@ class ReplyCommentWidget extends StatelessWidget {
                               color: Colors.red,
                             ),
                           ),
-                          visible: data.user_reply.id == docId,
+                          visible: data.user_reply.id == docId || currentUser.role,
                         ),
                       ),
                     )
@@ -150,5 +168,11 @@ class ReplyCommentWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void loadMapComment() {
+    dataComment.forEach((element) {
+      dataCommentMap.add(element.toJson());
+    });
   }
 }

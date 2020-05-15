@@ -45,11 +45,11 @@ class _NewsPageState extends State<NewsPage> {
         itemCount: dataPost?.length ?? 10,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
         ),
         scrollDirection: Axis.vertical,
-        cacheExtent: 8,
+        cacheExtent: 4,
         itemBuilder: (context, index) {
           if (dataPost == null) {
             return shimmerContainer(context);
@@ -74,7 +74,7 @@ class _NewsPageState extends State<NewsPage> {
                   child: Column(
                     children: <Widget>[
                       Container(
-                        height: 120,
+                        height: 100,
                         width: 200,
                         child: ClipRRect(
                           borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -85,10 +85,10 @@ class _NewsPageState extends State<NewsPage> {
                         ),
                       ),
                       Container(
-                        height: 40,
                         color: Colors.transparent,
                         child: Text(
                           dataPost[index].title,
+                          overflow: TextOverflow.clip,
                           style: Theme.of(context).textTheme.subtitle2.copyWith(
                               color: Colors.pink,
                               fontWeight: FontWeight.w700

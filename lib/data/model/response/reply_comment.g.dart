@@ -20,5 +20,5 @@ Map<String, dynamic> _$ReplyCommentToJson(ReplyComment instance) =>
     <String, dynamic>{
       'content': instance.content,
       'date_time': const TimestampConvertDatetime().toJson(instance.date_time),
-      'user_id_reply': instance.user_reply,
+      'user_reply': instance.user_reply,
     };

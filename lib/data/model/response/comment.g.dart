@@ -17,12 +17,12 @@ Comment _$CommentFromJson(Map<String, dynamic> json) {
     json['user_comment'] == null
         ? null
         : UserComment.fromJson(json['user_comment'] as Map<String, dynamic>),
-  );
+  )..isReply = json['isReply'] as bool;
 }
 
 Map<String, dynamic> _$CommentToJson(Comment instance) => <String, dynamic>{
       'content': instance.content,
       'date_time': const TimestampConvertDatetime().toJson(instance.date_time),
-      'reply_comment': instance.reply_comment,
-      'user_comment': instance.user_comment,
+      'reply_comment': instance.reply_comment.toList(),
+      'user_comment': instance.user_comment.toJson(),
     };

@@ -5,10 +5,16 @@ import 'package:flutter_app_make_beautiful/data/model/request/sign_up_user.dart'
 import 'package:flutter_app_make_beautiful/data/model/response/category.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/comment.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/post.dart';
+import 'package:flutter_app_make_beautiful/data/model/response/reply_comment.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/sign_in_user.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/sub_category.dart';
+import 'dart:developer' as developer;
+
+import 'package:flutter_app_make_beautiful/data/model/response/user_comment.dart';
 
 class AppRepository {
+  static final TAG = "AppRepository";
+
   final Firestore _store = Firestore.instance;
 
   final String collectionPost = 'post';
@@ -148,38 +154,32 @@ class AppRepository {
 
   Future<List<Post>> getPost(String id, TypePost typePost) async {
     List<Post> datas = [];
-    debugPrint('1');
     QuerySnapshot data = await _store
         .collection(collectionPost)
         .where(
             TypePost.CATEGORY != typePost ? "sub_category_id" : "category_id",
             isEqualTo: id)
         .getDocuments();
-    debugPrint('2');
     if (data.documents.length > 0) {
       for (DocumentSnapshot doc in data.documents) {
         datas.add(Post.fromJson(doc.data)..docId = doc.documentID);
       }
     }
-    debugPrint('3');
     return datas;
   }
 
   Future<List<Comment>> getComment(String id) async {
     List<Comment> datas = [];
-    debugPrint('1');
     QuerySnapshot data = await _store
         .collection(collectionPost)
         .document(id)
         .collection(collectionComment)
         .getDocuments();
-    debugPrint('2');
     if (data.documents.length > 0) {
       for (DocumentSnapshot doc in data.documents) {
-        datas.add(Comment.fromJson(doc.data)..docId = doc.documentID);
+        datas.add(Comment.fromJson(doc.data)..docId = doc.documentID..isReply = false);
       }
     }
-    debugPrint('3');
     return datas;
   }
 
@@ -192,7 +192,28 @@ class AppRepository {
     return documentReference.setData(data.toJson()) != null;
   }
 
+  Future<bool> insertCommentReply(String id,String idReply, List<Map<String, dynamic>> data) async {
+    debugPrint('1');
+    DocumentReference documentReference = _store
+        .collection(collectionPost)
+        .document(id)
+        .collection(collectionComment)
+        .document(idReply);
+    debugPrint('2');
+    debugPrint('data $data');
+    return documentReference.setData({'reply_comment': data},merge: true) != null;
+  }
+
   Future<bool> deleteComment(String id, String idComment) async {
+    DocumentReference documentReference = _store
+        .collection(collectionPost)
+        .document(id)
+        .collection(collectionComment)
+        .document(idComment);
+    return documentReference.delete() != null;
+  }
+
+  Future<bool> deleteReplyComment(String id, String idComment) async {
     DocumentReference documentReference = _store
         .collection(collectionPost)
         .document(id)
