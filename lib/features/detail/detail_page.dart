@@ -6,6 +6,7 @@ import 'package:flutter_app_make_beautiful/data/model/response/reply_comment.dar
 import 'package:flutter_app_make_beautiful/data/model/response/sign_in_user.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/user_comment.dart';
 import 'package:flutter_app_make_beautiful/resource/constant.dart';
+import 'package:flutter_app_make_beautiful/resource/constant.dart';
 import 'package:flutter_app_make_beautiful/widget/show_dialog_loading.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -50,6 +51,8 @@ class _DetailPageState extends State<DetailPage>
 
   List<String> liked = [];
 
+  List<String> saved = [];
+
   List<Comment> dataComment;
 
   List<Map<String, dynamic>> reply_comment = [];
@@ -61,6 +64,8 @@ class _DetailPageState extends State<DetailPage>
   String idComment;
 
   bool checked = false;
+
+  bool isSave = false;
 
   bool isComment = false;
 
@@ -89,6 +94,8 @@ class _DetailPageState extends State<DetailPage>
         reply_comment2 = value.item3;
       });
     };
+    isLikePost();
+    isSavePost();
   }
 
   @override
@@ -96,11 +103,23 @@ class _DetailPageState extends State<DetailPage>
     super.didChangeDependencies();
     if (currentUser == null) {
       currentUser = _appBloc.currentUser;
+      setState(() {
+        saved = _appBloc.currentUser.save_post;
+      });
     }
     _getContent();
     isLikePost();
+    isSavePost();
     _getDataComment();
-    debugPrint('current user: ${_appBloc.currentUser.docId}');
+    debugPrint('current user: ${_appBloc.currentUser?.save_post.length}');
+    debugPrint(' data: ${_appBloc.currentUser?.save_post.length}');
+  }
+
+  @override
+  void setState(fn) {
+    if(mounted){
+      super.setState(fn);
+    }
   }
 
   @override
@@ -147,15 +166,7 @@ class _DetailPageState extends State<DetailPage>
                                   alignment: Alignment.centerRight,
                                   decoration: BoxDecoration(
                                       color: Colors.white,
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey,
-                                          offset: Offset(1.0, 1.0),
-                                          blurRadius: 1,
-                                          spreadRadius: 1,
-                                        )
-                                      ]),
+                                      shape: BoxShape.circle,),
                                   child: IconButton(
                                     onPressed: () {
                                       if (checked) {
@@ -167,6 +178,32 @@ class _DetailPageState extends State<DetailPage>
                                     icon: Icon(
                                       Icons.favorite,
                                       color: checked ? Colors.red : Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 0,
+                                bottom: 60,
+                                child: Container(
+                                  width: 48,
+                                  height: 48,
+                                  margin: EdgeInsets.only(left: 4),
+                                  alignment: Alignment.centerRight,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      shape: BoxShape.circle,),
+                                  child: IconButton(
+                                    onPressed: () {
+                                      if (isSave) {
+                                        savePost(false);
+                                      } else {
+                                        savePost(true);
+                                      }
+                                    },
+                                    icon: Icon(
+                                      Icons.bookmark,
+                                      color: isSave ? PINK : Colors.grey,
                                     ),
                                   ),
                                 ),
@@ -399,13 +436,24 @@ class _DetailPageState extends State<DetailPage>
   }
 
   void isLikePost() {
-    widget.data.like.forEach((element) {
-      if (element == currentUser.docId) {
+    widget.data?.like?.forEach((element) {
+      if (element == currentUser?.docId) {
         setState(() {
           checked = true;
         });
       }
     });
+  }
+
+  void isSavePost() {
+      currentUser?.save_post?.forEach((element) {
+        if (element == widget.data?.docId) {
+          setState(() {
+            isSave = true;
+            debugPrint('isSave: $isSave');
+          });
+        }
+      });
   }
 
   int getLengthImage() {
@@ -487,9 +535,11 @@ class _DetailPageState extends State<DetailPage>
   }
 
   void likePost(bool isLiked) {
+    developer.log('likePost ${widget.data.docId}', name: TAG);
+    developer.log('likePost ${liked.length}', name: TAG);
     if (isLiked) {
       liked.add(_appBloc.currentUser.docId);
-      showDialogProgressLoading(
+      showDialogProgressLoading<bool>(
           context, _appBloc.isLiked(liked, widget.data.docId))
           .then((value) {
         if (value) {
@@ -498,7 +548,7 @@ class _DetailPageState extends State<DetailPage>
       });
     } else {
       liked.remove(_appBloc.currentUser.docId);
-      showDialogProgressLoading(
+      showDialogProgressLoading<bool>(
           context, _appBloc.isLiked(liked, widget.data.docId))
           .then((value) {
         if (value) {
@@ -508,6 +558,32 @@ class _DetailPageState extends State<DetailPage>
         }
       });
     }
+    _appBloc.onLoad();
+  }
+
+  void savePost(bool isSaved) {
+    if (isSaved) {
+      saved.add(widget.data.docId);
+      showDialogProgressLoading<bool>(
+          context, _appBloc.saveStorage(currentUser.docId, saved))
+          .then((value) {
+        if (value) {
+          isSavePost();
+        }
+      });
+    } else {
+      saved.remove(widget.data.docId);
+      showDialogProgressLoading<bool>(
+          context, _appBloc.saveStorage(currentUser.docId, saved))
+          .then((value) {
+        if (value) {
+          setState(() {
+            isSave = false;
+          });
+        }
+      });
+    }
+    _appBloc.onLoad();
   }
 
   void _getDataComment() {
@@ -516,9 +592,7 @@ class _DetailPageState extends State<DetailPage>
         setState(() {
           dataComment = value;
           dataComment.forEach((element) {
-            setState(() {
               element.isReply = false;
-            });
           });
         });
       } else {

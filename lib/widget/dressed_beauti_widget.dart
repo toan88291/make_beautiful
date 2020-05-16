@@ -45,6 +45,7 @@ class _DressedBeautyWidgetState extends State<DressedBeautyWidget> {
                           highlightColor: Colors.grey[100],
                           child: Container(
                             height: 120,
+                            width: 140,
                             decoration: BoxDecoration(
                                  color: Colors.grey[100]
                             ),
@@ -53,6 +54,7 @@ class _DressedBeautyWidgetState extends State<DressedBeautyWidget> {
                         widget.data.thumb,
                         fit: BoxFit.cover,
                         height: 120,
+                        width: 140,
                       );
                 },
               ),

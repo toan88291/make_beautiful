@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> {
     if (_appBloc == null) {
       _appBloc = Provider.of(context);
       _appBloc.getCategory();
+      _appBloc.getPostHair();
       _appBloc.addListener(onChange);
     }
   }

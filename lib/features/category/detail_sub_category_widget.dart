@@ -129,7 +129,7 @@ class _DetailSubCategoryWidgetState extends State<DetailSubCategoryWidget> {
                         child: Column(
                           children: <Widget>[
                             Container(
-                              height: 120,
+                              height: 100,
                               width: 200,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -146,7 +146,7 @@ class _DetailSubCategoryWidgetState extends State<DetailSubCategoryWidget> {
                                             baseColor: Colors.grey[300],
                                             highlightColor: Colors.grey[100],
                                             child: Container(
-                                              height: 120,
+                                              height: 100,
                                               width: 200,
                                               decoration: BoxDecoration(
                                                   color: Colors.grey[100]),
@@ -161,7 +161,6 @@ class _DetailSubCategoryWidgetState extends State<DetailSubCategoryWidget> {
                               ),
                             ),
                             Container(
-                              height: 40,
                               color: Colors.transparent,
                               child: Text(
                                 datas[index].title,

@@ -40,7 +40,7 @@ class AppBloc extends ChangeNotifier {
     });
   }
 
-  void getIdUser() {
+  Future<void> getIdUser() async {
     SharedPreferences.getInstance().then((value) {
       idUser = value.getString(TOKEN);
       if (idUser != null) {
@@ -52,7 +52,7 @@ class AppBloc extends ChangeNotifier {
 
   Future<void> getCurrentUser(String id) async {
     currentUser = await appRepository.getUser(id);
-    await getStoragePost(currentUser);
+    getStoragePost(currentUser);
     notifyListeners();
   }
 
@@ -63,7 +63,6 @@ class AppBloc extends ChangeNotifier {
       value.setString(TOKEN,currentUser.docId);
     });
     debugPrint('2');
-    await getStoragePost(user);
     notifyListeners();
   }
 
@@ -72,7 +71,8 @@ class AppBloc extends ChangeNotifier {
   }
 
   Future<void> getStoragePost(SignInUser user) async{
-    user.save_post.forEach((element) {
+    dataStorage = [];
+    user.save_post?.forEach((element) {
       debugPrint('getStoragePost id : $element');
       appRepository.getStoragePost(element).then((value) {
         dataStorage.add(value.asValue.value);
@@ -136,6 +136,10 @@ class AppBloc extends ChangeNotifier {
     return appRepository.getPost(id, typePost);
   }
 
+  Future<bool> saveStorage(String id, List<String> data) async {
+    return appRepository.saveStorage(id, data);
+  }
+
   void getPostHair() {
     getPost(ID_HAIR_BEAUTY,TypePost.CATEGORY).then((value) {
       dataHairBeauty = value;
@@ -157,6 +161,11 @@ class AppBloc extends ChangeNotifier {
 
   Future<bool> deleteComment(String id, String idComment) async {
     return appRepository.deleteComment(id, idComment);
+  }
+
+  void onLoad() {
+    getPostHair();
+    getStoragePost(currentUser);
   }
 
 }

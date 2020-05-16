@@ -55,7 +55,7 @@ class _CommentWidgetState extends State<CommentWidget> {
           SliverOverlapInjector(
             handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
           ),
-          widget.dataComment != null
+          widget.dataComment.isNotEmpty
               ? SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: 8),
                   sliver: SliverList(

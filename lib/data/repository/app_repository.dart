@@ -82,9 +82,17 @@ class AppRepository {
     DocumentReference documentReference =
         _store.collection(collectionPost).document(id);
     DocumentSnapshot documentSnapshot = await documentReference.get();
-    datas = Post.fromJson(documentSnapshot.data);
+    datas = Post.fromJson(documentSnapshot.data)..docId = documentSnapshot.documentID;
     debugPrint('getStoragePost $datas');
     return Result.value(datas);
+  }
+
+  Future<bool> saveStorage(String id, List<String> data) async {
+    DocumentReference documentReference = _store
+        .collection(collectionUser)
+        .document(id);
+    await documentReference.updateData({'save_post': data});
+    return documentReference.updateData({'save_post': data}) != null;
   }
 
   Future<bool> insertUser(SignUpUser data) async {
@@ -149,6 +157,7 @@ class AppRepository {
   Future<bool> isLiked(List<String> like, String docId) async {
     DocumentReference documentReference =
         _store.collection(collectionPost).document(docId);
+    await documentReference.updateData({"like": like});
     return documentReference.updateData({"like": like}) != null;
   }
 
@@ -193,14 +202,11 @@ class AppRepository {
   }
 
   Future<bool> insertCommentReply(String id,String idReply, List<Map<String, dynamic>> data) async {
-    debugPrint('1');
     DocumentReference documentReference = _store
         .collection(collectionPost)
         .document(id)
         .collection(collectionComment)
         .document(idReply);
-    debugPrint('2');
-    debugPrint('data $data');
     return documentReference.setData({'reply_comment': data},merge: true) != null;
   }
 
