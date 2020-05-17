@@ -34,6 +34,7 @@ class _DressedBeautyWidgetState extends State<DressedBeautyWidget> {
                 widget.data.thumb,
                 fit: BoxFit.cover,
                 height: 120,
+                width: 140,
                 frameBuilder: (BuildContext context, Widget child, int frame,
                     bool wasSynchronouslyLoaded) {
                   if (wasSynchronouslyLoaded) {

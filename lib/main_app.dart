@@ -49,7 +49,7 @@ class MainApp extends StatelessWidget {
           ),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: Color(0xffDADADA),
+              color: PINK,
             ),
             borderRadius: BorderRadius.all(Radius.circular(4)),
           ),

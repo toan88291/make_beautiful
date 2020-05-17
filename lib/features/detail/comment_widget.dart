@@ -44,7 +44,7 @@ class _CommentWidgetState extends State<CommentWidget> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _appBloc = Provider.of(context, listen: false);
-    developer.log('didChangeDependencies id post: ${widget.id}', name: TAG);
+    developer.log('didChangeDependencies id post: ${widget.currentUser?.docId}', name: TAG);
   }
 
   @override
@@ -258,8 +258,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                                                             .user_comment
                                                             .id ==
                                                         widget.currentUser
-                                                            .docId ||
-                                                    widget.currentUser.role,
+                                                            ?.docId ||
+                                                    widget.currentUser?.role != null ?? false,
                                               ),
                                             ),
                                           ],

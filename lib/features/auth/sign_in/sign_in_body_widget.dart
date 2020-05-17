@@ -6,6 +6,10 @@ import 'package:flutter_app_make_beautiful/widget/widgets.dart';
 import 'package:provider/provider.dart';
 
 class SignInBodyWidget extends StatefulWidget {
+  final bool check;
+
+  SignInBodyWidget(this.check);
+
   @override
   _SignInBodyWidgetState createState() => _SignInBodyWidgetState();
 }
@@ -182,9 +186,15 @@ class _SignInBodyWidgetState extends State<SignInBodyWidget> {
       showDialogProgressLoading(context, _appBloc.login(username, password))
           .then((value) {
             if (value) {
-              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context){
-                return MainPage();
-              }));
+              _appBloc.onLoad();
+              if (widget.check) {
+                Navigator.of(context).pop();
+              } else {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context){
+                  return MainPage();
+                }));
+              }
+
             } else {
               setState(() {
                 errorText = true;

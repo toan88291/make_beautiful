@@ -5,6 +5,7 @@ import 'package:flutter_app_make_beautiful/data/model/response/sub_category.dart
 import 'package:flutter_app_make_beautiful/data/repository/app_repository.dart';
 import 'package:flutter_app_make_beautiful/features/detail/detail_page.dart';
 import 'package:flutter_app_make_beautiful/resource/constant.dart';
+import 'package:flutter_app_make_beautiful/widget/app_header_category_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -42,20 +43,12 @@ class _DetailSubCategoryWidgetState extends State<DetailSubCategoryWidget> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
+    double heightPadding = MediaQuery.of(context).padding.top;
     double width = MediaQuery.of(context).size.width;
 
     if (datas == null) {
       return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            leading: BackButton(
-              color: PINK,
-            ),
-            title: Text(
-              widget.data.name,
-            ),
-            centerTitle: true,
-          ),
+          appBar: AppHeaderCategoryWidget(heightPadding,widget.data.name),
           body: Container(
               child: GridView.builder(
             padding: EdgeInsets.all(12),
@@ -74,16 +67,7 @@ class _DetailSubCategoryWidgetState extends State<DetailSubCategoryWidget> {
           )));
     } else if (datas.isEmpty) {
       return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            leading: BackButton(
-              color: PINK,
-            ),
-            title: Text(
-              widget.data.name,
-            ),
-            centerTitle: true,
-          ),
+          appBar: AppHeaderCategoryWidget(heightPadding,widget.data.name),
           body: Container(
             alignment: Alignment.center,
             child: Text(
@@ -96,16 +80,7 @@ class _DetailSubCategoryWidgetState extends State<DetailSubCategoryWidget> {
           ));
     } else {
       return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            leading: BackButton(
-              color: PINK,
-            ),
-            title: Text(
-              widget.data.name,
-            ),
-            centerTitle: true,
-          ),
+          appBar: AppHeaderCategoryWidget(heightPadding,widget.data.name),
           body: Container(
               child: GridView.builder(
                 padding: EdgeInsets.all(12),

@@ -5,6 +5,7 @@ import 'package:flutter_app_make_beautiful/data/model/response/post.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/reply_comment.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/sign_in_user.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/user_comment.dart';
+import 'package:flutter_app_make_beautiful/features/auth/sign_in/sign_in_page.dart';
 import 'package:flutter_app_make_beautiful/resource/constant.dart';
 import 'package:flutter_app_make_beautiful/resource/constant.dart';
 import 'package:flutter_app_make_beautiful/widget/show_dialog_loading.dart';
@@ -104,15 +105,15 @@ class _DetailPageState extends State<DetailPage>
     if (currentUser == null) {
       currentUser = _appBloc.currentUser;
       setState(() {
-        saved = _appBloc.currentUser.save_post;
+        saved = _appBloc.currentUser?.save_post;
       });
     }
     _getContent();
     isLikePost();
     isSavePost();
     _getDataComment();
-    debugPrint('current user: ${_appBloc.currentUser?.save_post.length}');
-    debugPrint(' data: ${_appBloc.currentUser?.save_post.length}');
+    debugPrint('current user: ${_appBloc.currentUser?.save_post?.length}');
+    debugPrint(' data: ${_appBloc.currentUser?.save_post?.length}');
   }
 
   @override
@@ -169,10 +170,16 @@ class _DetailPageState extends State<DetailPage>
                                       shape: BoxShape.circle,),
                                   child: IconButton(
                                     onPressed: () {
-                                      if (checked) {
-                                        likePost(false);
+                                      if (_appBloc.currentUser != null) {
+                                        if (checked) {
+                                          likePost(false);
+                                        } else {
+                                          likePost(true);
+                                        }
                                       } else {
-                                        likePost(true);
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                                          return SignInPage(check: true,);
+                                        }));
                                       }
                                     },
                                     icon: Icon(
@@ -183,7 +190,7 @@ class _DetailPageState extends State<DetailPage>
                                 ),
                               ),
                               Positioned(
-                                left: 0,
+                                right: 60,
                                 bottom: 60,
                                 child: Container(
                                   width: 48,
@@ -195,10 +202,16 @@ class _DetailPageState extends State<DetailPage>
                                       shape: BoxShape.circle,),
                                   child: IconButton(
                                     onPressed: () {
-                                      if (isSave) {
-                                        savePost(false);
+                                      if (_appBloc.currentUser != null) {
+                                        if (isSave) {
+                                          savePost(false);
+                                        } else {
+                                          savePost(true);
+                                        }
                                       } else {
-                                        savePost(true);
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                                          return SignInPage(check: true,);
+                                        }));
                                       }
                                     },
                                     icon: Icon(
@@ -388,44 +401,50 @@ class _DetailPageState extends State<DetailPage>
   }
 
   void _insertComment() {
-    if (_textEditingController.text != null) {
-      if (isReplyComment) {
-        addReplyComment();
-        reply_comment.add(ReplyComment(
-            _textEditingController.text,
-            DateTime.now(),
-            UserComment(
-              currentUser.docId,
-              currentUser.fullname,
-              currentUser.avatar,
-            )
-        ).toJson());
-        showDialogProgressLoading<bool>(
-            context, _appBloc.insertCommentReply(widget.data.docId, idReplyComment,
-            reply_comment)).then((value) {
-          _textEditingController.clear();
-          _getDataComment();
-          setState(() {
-            isReplyComment = false;
+    if (currentUser != null) {
+      if (_textEditingController.text != null) {
+        if (isReplyComment) {
+          addReplyComment();
+          reply_comment.add(ReplyComment(
+              _textEditingController.text,
+              DateTime.now(),
+              UserComment(
+                currentUser.docId,
+                currentUser.fullname,
+                currentUser.avatar,
+              )
+          ).toJson());
+          showDialogProgressLoading<bool>(
+              context, _appBloc.insertCommentReply(widget.data.docId, idReplyComment,
+              reply_comment)).then((value) {
+            _textEditingController.clear();
+            _getDataComment();
+            setState(() {
+              isReplyComment = false;
+            });
+            debugPrint('3');
           });
-          debugPrint('3');
-        });
-      } else {
-        showDialogProgressLoading<bool>(
-            context, _appBloc.insertComment(widget.data.docId, Comment(
-            _textEditingController.text,
-            DateTime.now(),
-            [],
-            UserComment(
-              currentUser.docId,
-              currentUser.fullname,
-              currentUser.avatar,
-            )
-        ))).then((value) {
-          _textEditingController.clear();
-          _getDataComment();
-        });
+        } else {
+          showDialogProgressLoading<bool>(
+              context, _appBloc.insertComment(widget.data.docId, Comment(
+              _textEditingController.text,
+              DateTime.now(),
+              [],
+              UserComment(
+                currentUser.docId,
+                currentUser.fullname,
+                currentUser.avatar,
+              )
+          ))).then((value) {
+            _textEditingController.clear();
+            _getDataComment();
+          });
+        }
       }
+    } else {
+      Navigator.of(context).push(MaterialPageRoute(builder: (context){
+        return SignInPage(check: true,);
+      }));
     }
   }
 

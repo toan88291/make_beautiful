@@ -227,6 +227,20 @@ class AppRepository {
         .document(idComment);
     return documentReference.delete() != null;
   }
+
+  Future<Result<List<Post>>> search(String search) async {
+    List<Post> datas = [];
+    QuerySnapshot data = await _store
+        .collection(collectionPost)
+        .getDocuments();
+    if (data.documents.length > 0) {
+      for (DocumentSnapshot doc in data.documents) {
+        datas.add(Post.fromJson(doc.data)..docId = doc.documentID);
+      }
+    }
+    return Result.value(datas);
+  }
+  
 }
 
 enum TypePost { CATEGORY, SUB_CATEGORY }

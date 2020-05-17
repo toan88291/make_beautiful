@@ -163,6 +163,10 @@ class AppBloc extends ChangeNotifier {
     return appRepository.deleteComment(id, idComment);
   }
 
+  Future<Result<List<Post>>> search(String search) async {
+    return appRepository.search(search);
+  }
+
   void onLoad() {
     getPostHair();
     getStoragePost(currentUser);

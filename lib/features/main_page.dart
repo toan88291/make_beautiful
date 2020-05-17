@@ -1,15 +1,10 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_make_beautiful/data/bloc/app_bloc.dart';
-import 'package:flutter_app_make_beautiful/data/model/response/category.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/sign_in_user.dart';
-import 'package:flutter_app_make_beautiful/features/auth/sign_in/sign_in_page.dart';
-import 'package:flutter_app_make_beautiful/resource/constant.dart';
-import 'package:flutter_app_make_beautiful/resource/icon.dart';
-import 'package:flutter_app_make_beautiful/widget/home_menu_popup.dart';
+import 'package:flutter_app_make_beautiful/features/auth/widget.dart';
+import 'package:flutter_app_make_beautiful/widget/app_header_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
-import 'auth/sign_up/sign_up_page.dart';
 import 'home/home_page.dart';
 import 'news/news_page.dart';
 import 'storage/storage_page.dart';
@@ -76,101 +71,7 @@ class _MainPageState extends State<MainPage> {
     double height = MediaQuery.of(context).padding.top;
 
     return Scaffold(
-        appBar: PreferredSize(
-          child: SafeArea(
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 20),
-              color: Colors.white,
-              child: Row(
-                children: <Widget>[
-                  _appBloc.currentUser == null
-                      ? Container(
-                          child: InkWell(
-                              onTap: () {
-                                Navigator.of(context)
-                                    .push(MaterialPageRoute(builder: (context) {
-                                  return SignInPage();
-                                }));
-                              },
-                              child: CircleAvatar(
-                                backgroundImage: AssetImage(
-                                  AppIcons.icAvatar,
-                                ),
-                              )),
-                        )
-                      : Container(
-                          width: 48,
-                          height: 48,
-                          child: InkWell(
-                              onTap: () {
-                                showDialog(
-                                    context: context, child: HomeMenuPopup());
-                              },
-                              child: _appBloc.currentUser != null
-                                  ? ClipOval(
-                                child: Image.network(
-                                  Provider.of<AppBloc>(context).currentUser?.avatar,
-                                  width: 48,
-                                  height: 48,
-                                  fit: BoxFit.cover,
-                                  frameBuilder: (BuildContext context, Widget child,
-                                      int frame, bool wasSynchronouslyLoaded) {
-                                    if (wasSynchronouslyLoaded) {
-                                      return child;
-                                    }
-                                    return frame == null
-                                        ? Shimmer.fromColors(
-                                      baseColor: Colors.grey[300],
-                                      highlightColor: Colors.grey[100],
-                                      child: Container(
-                                        height: 48,
-                                        width: 48,
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.grey[100]),
-                                      ),
-                                    )
-                                        : Image.network(
-                                      Provider.of<AppBloc>(context).currentUser.avatar,
-                                      width: 48,
-                                      height: 48,
-                                      fit: BoxFit.cover,
-                                    );
-                                  },
-                                ),
-                              )
-                                  : CircleAvatar(
-                                      backgroundImage: AssetImage(
-                                        AppIcons.icAvatar,
-                                      ),
-                                    )),
-                        ),
-                  Expanded(
-                    child: Container(
-                      child: Text(
-                        'Beauty Care',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headline6.copyWith(
-                              color: PINK,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 48,
-                    width: 48,
-                    child: Icon(
-                      Icons.search,
-                      color: PINK,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          preferredSize: Size.fromHeight(height + 52),
-        ),
+        appBar: AppBarHeaderWidget(height, ' Beautiful Care'),
         body: PageView(
           controller: _pageController,
           physics: NeverScrollableScrollPhysics(),

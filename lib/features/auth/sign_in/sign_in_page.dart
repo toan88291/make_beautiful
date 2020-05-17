@@ -6,6 +6,10 @@ import 'dart:developer' as developer;
 import 'sign_in_body_widget.dart';
 
 class SignInPage extends StatefulWidget {
+  final bool check;
+
+  SignInPage({this.check = false});
+
   static const ROUTE_NAME = 'SignInPage';
 
   @override
@@ -25,7 +29,7 @@ class _SignInPageState extends State<SignInPage> {
           subTitle: Text(''),
           logo: AppIcons.icLogo,
         ),
-        body: SignInBodyWidget()
+        body: SignInBodyWidget(widget.check)
     );
   }
 }

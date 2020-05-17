@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_make_beautiful/data/bloc/app_bloc.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/category.dart';
 import 'package:flutter_app_make_beautiful/data/model/response/sub_category.dart';
-import 'package:flutter_app_make_beautiful/features/auth/sign_in/sign_in_page.dart';
-import 'package:flutter_app_make_beautiful/resource/constant.dart';
-import 'package:flutter_app_make_beautiful/resource/icon.dart';
+import 'package:flutter_app_make_beautiful/widget/app_header_category_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -41,14 +39,7 @@ class _CategoryPageState extends State<CategoryPage> {
     double height = MediaQuery.of(context).padding.top;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: BackButton(color: PINK,),
-        title: Text(
-          widget.data.name,
-        ),
-        centerTitle: true,
-      ),
+      appBar: AppHeaderCategoryWidget(height, widget.data.name),
       body: Container(
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
