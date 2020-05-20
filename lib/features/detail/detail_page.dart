@@ -8,6 +8,7 @@ import 'package:flutter_app_make_beautiful/data/model/response/user_comment.dart
 import 'package:flutter_app_make_beautiful/features/auth/sign_in/sign_in_page.dart';
 import 'package:flutter_app_make_beautiful/resource/constant.dart';
 import 'package:flutter_app_make_beautiful/resource/constant.dart';
+import 'package:flutter_app_make_beautiful/utils/utils.dart';
 import 'package:flutter_app_make_beautiful/widget/show_dialog_loading.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -489,7 +490,7 @@ class _DetailPageState extends State<DetailPage>
     int count = 0;
     int lengthImage = getLengthImage();
     widget.data.content.forEach((element) {
-      if (element.contains('content:') && element.length < 100 ) {
+      if (element.contains('content:') &&  ValidateUtils.isTitle(element.substring(8, element.length))) {
         data.add(Container(
           child: Text(
             element.substring(8, element.length),

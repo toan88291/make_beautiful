@@ -25,12 +25,24 @@ class AppBloc extends ChangeNotifier {
 
   List<Post> dataHairBeauty = [];
 
+  List<Post> dataMakeUp = [];
+
+  List<Post> dataSport = [];
+
+  List<Post> dataSkinBeauty = [];
+
+  List<Post> dataWearBeauty = [];
+
   Result<List<Category>> categoryData = Result.value(null);
 
   AppBloc({this.appRepository}) {
     getCategory();
     getIdUser();
     getPostHair();
+    getMakeUp();
+    getSport();
+    getSkinBeauty();
+    getWearBeauty();
   }
 
   void getCategory() {
@@ -147,6 +159,34 @@ class AppBloc extends ChangeNotifier {
     });
   }
 
+  void getMakeUp() {
+    getPost(ID_MAKEUP,TypePost.CATEGORY).then((value) {
+      dataMakeUp = value;
+      notifyListeners();
+    });
+  }
+
+  void getSport() {
+    getPost(ID_SPORT,TypePost.CATEGORY).then((value) {
+      dataSport = value;
+      notifyListeners();
+    });
+  }
+
+  void getSkinBeauty() {
+    getPost(ID_SKIN_BEATY,TypePost.CATEGORY).then((value) {
+      dataSkinBeauty = value;
+      notifyListeners();
+    });
+  }
+
+  void getWearBeauty() {
+    getPost(ID_WEAR_BEAUTY,TypePost.CATEGORY).then((value) {
+      dataWearBeauty = value;
+      notifyListeners();
+    });
+  }
+
   Future<List<Comment>> getComment(String id) async {
     return appRepository.getComment(id);
   }
@@ -169,6 +209,10 @@ class AppBloc extends ChangeNotifier {
 
   void onLoad() {
     getPostHair();
+    getMakeUp();
+    getSport();
+    getSkinBeauty();
+    getWearBeauty();
     getStoragePost(currentUser);
   }
 

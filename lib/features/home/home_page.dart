@@ -72,11 +72,11 @@ class _HomePageState extends State<HomePage> {
               child: GridView.builder(
                 itemCount: _appBloc.categoryData.asValue.value?.length ?? 0,
                 physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   mainAxisSpacing: 12,
                   crossAxisSpacing: 12,
-
                 ),
                 padding: EdgeInsets.all(12),
                 itemBuilder: (context, index) {
@@ -102,6 +102,58 @@ class _HomePageState extends State<HomePage> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12,vertical: 4),
                     child: Text('Make Up',style: Theme.of(context).textTheme.subtitle2.copyWith(
+                        fontWeight: FontWeight.bold
+                    ),),
+                  ),
+                  InkWell(
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                        return DetailCategoryWidget(ID_MAKEUP,'Make Up');
+                      }));
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 4),
+                      child: Text('Xem Hết',style: Theme.of(context).textTheme.subtitle2.copyWith(
+                          color: PINK
+                      ),),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              height: 220,
+              child: ListView.separated(
+                itemCount: _appBloc.dataMakeUp?.length ?? 0,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  if (index < 9) {
+                    return DressedBeautyWidget(_appBloc.dataMakeUp[index]);
+                  }
+                  return null;
+                },
+                separatorBuilder: (context, index) {
+                  if (index < 9) {
+                    return SizedBox(width: 8,);
+                  }
+                  return null;
+                },
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12,vertical: 4),
+                    child: Text('Tóc Đẹp',style: Theme.of(context).textTheme.subtitle2.copyWith(
                         fontWeight: FontWeight.bold
                     ),),
                   ),
@@ -160,7 +212,7 @@ class _HomePageState extends State<HomePage> {
                   InkWell(
                     onTap: (){
                       Navigator.of(context).push(MaterialPageRoute(builder: (context){
-                        return DetailCategoryWidget(ID_HAIR_BEAUTY,'Tóc Đẹp');
+                        return DetailCategoryWidget(ID_WEAR_BEAUTY,'Mặc Đẹp');
                       }));
                     },
                     child: Padding(
@@ -179,11 +231,11 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.symmetric(horizontal: 12),
               height: 220,
               child: ListView.separated(
-                itemCount: _appBloc.dataHairBeauty?.length ?? 0,
+                itemCount: _appBloc.dataWearBeauty?.length ?? 0,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
                   if (index < 9) {
-                    return DressedBeautyWidget(_appBloc.dataHairBeauty[index]);
+                    return DressedBeautyWidget(_appBloc.dataWearBeauty[index]);
                   }
                   return null;
                 },
@@ -212,7 +264,7 @@ class _HomePageState extends State<HomePage> {
                   InkWell(
                     onTap: (){
                       Navigator.of(context).push(MaterialPageRoute(builder: (context){
-                        return DetailCategoryWidget(ID_HAIR_BEAUTY,'Tóc Đẹp');
+                        return DetailCategoryWidget(ID_SPORT,'Thể Thao');
                       }));
                     },
                     child: Padding(
@@ -231,11 +283,63 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.symmetric(horizontal: 12),
               height: 220,
               child: ListView.separated(
-                itemCount: _appBloc.dataHairBeauty?.length ?? 0,
+                itemCount: _appBloc.dataSport?.length ?? 0,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
                   if (index < 9) {
-                    return DressedBeautyWidget(_appBloc.dataHairBeauty[index]);
+                    return DressedBeautyWidget(_appBloc.dataSport[index]);
+                  }
+                  return null;
+                },
+                separatorBuilder: (context, index) {
+                  if (index < 9) {
+                    return SizedBox(width: 8,);
+                  }
+                  return null;
+                },
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12,vertical: 4),
+                    child: Text('Da Đẹp',style: Theme.of(context).textTheme.subtitle2.copyWith(
+                        fontWeight: FontWeight.bold
+                    ),),
+                  ),
+                  InkWell(
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                        return DetailCategoryWidget(ID_SKIN_BEATY,'Da Đẹp');
+                      }));
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 4),
+                      child: Text('Xem Hết',style: Theme.of(context).textTheme.subtitle2.copyWith(
+                          color: PINK
+                      ),),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              height: 220,
+              child: ListView.separated(
+                itemCount: _appBloc.dataSkinBeauty?.length ?? 0,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  if (index < 9) {
+                    return DressedBeautyWidget(_appBloc.dataSkinBeauty[index]);
                   }
                   return null;
                 },

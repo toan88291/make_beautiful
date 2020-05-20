@@ -67,7 +67,7 @@ class AppRepository {
     QuerySnapshot data = await _store
         .collection(collectionPost)
         .orderBy('date_time', descending: true)
-        .limit(20)
+        .limit(30)
         .getDocuments();
     if (data.documents.length > 0) {
       for (DocumentSnapshot doc in data.documents) {
