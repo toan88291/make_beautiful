@@ -55,7 +55,7 @@ class _CommentWidgetState extends State<CommentWidget> {
           SliverOverlapInjector(
             handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
           ),
-          widget.dataComment.isNotEmpty
+          widget.dataComment?.isNotEmpty && widget.dataComment != null
               ? SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: 8),
                   sliver: SliverList(
@@ -258,8 +258,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                                                             .user_comment
                                                             .id ==
                                                         widget.currentUser
-                                                            ?.docId ||
-                                                    widget.currentUser?.role != null ?? false,
+                                                            ?.docId ,
                                               ),
                                             ),
                                           ],
@@ -307,16 +306,18 @@ class _CommentWidgetState extends State<CommentWidget> {
 
   List<Widget> showCommentReply(int index) {
     List<Widget> datas = [];
-    widget.dataComment[index].reply_comment.forEach((element) {
-      datas.add(ReplyCommentWidget(
+    if (widget.dataComment.isNotEmpty) {
+      widget.dataComment[index]?.reply_comment?.forEach((element) {
+        datas.add(ReplyCommentWidget(
           element,
-          widget.currentUser.docId,
-          widget.dataComment[index].reply_comment,
+          widget.currentUser?.docId,
+          widget.dataComment[index]?.reply_comment,
           widget.currentUser,
           widget.onLoadComment,
-          Tuple2<String,String>(widget.id,widget.dataComment[index].docId),
-      ));
-    });
+          Tuple2<String,String>(widget.id,widget.dataComment[index]?.docId),
+        ));
+      });
+    }
     return datas;
   }
 }

@@ -82,7 +82,9 @@ class AppRepository {
     DocumentReference documentReference =
         _store.collection(collectionPost).document(id);
     DocumentSnapshot documentSnapshot = await documentReference.get();
-    datas = Post.fromJson(documentSnapshot.data)..docId = documentSnapshot.documentID;
+//    if (documentSnapshot.data != null) {
+      datas = Post.fromJson(documentSnapshot.data)..docId = documentSnapshot.documentID;
+//    }
     debugPrint('getStoragePost $datas');
     return Result.value(datas);
   }

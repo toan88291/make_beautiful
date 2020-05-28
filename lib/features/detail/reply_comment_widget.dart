@@ -156,7 +156,7 @@ class ReplyCommentWidget extends StatelessWidget {
                               color: Colors.red,
                             ),
                           ),
-                          visible: data.user_reply.id == docId || currentUser.role,
+                          visible: data.user_reply.id == docId,
                         ),
                       ),
                     )
